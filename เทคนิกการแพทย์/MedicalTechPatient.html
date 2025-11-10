@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGx System</title>
+    <link rel="stylesheet" href="MedicalTechPatient.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="page-patient">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h1>PGx System</h1>
+            <nav class="menu">
+                <button class="menu-item">
+                    <span class="icon">
+                        <img src="image/Home.png" alt="home">
+                    </span>
+                    <span class="label">Dashboard</span>
+                </button>
+                <button class="menu-item">
+                    <span class="icon">
+                        <img src="image/Clipboard.png" alt="Clipboard">
+                    </span>
+                    <span class="label">หน้ารวมผู้ป่วย</span>
+                </button>
+                <button class="menu-item">
+                    <span class="icon">
+                        <img src="image/File.png" alt="File">
+                    </span>
+                    <span class="label">รับสิ่งส่งตรวจ</span>
+                </button>
+                <button class="menu-item active">
+                    <span class="icon">
+                        <img src="image/File.png" alt="File">
+                    </span>
+                    <span class="label">รายงานผล</span>
+                </button>
+            </nav>
+            <button class="logout">
+                <span class="icon">
+                    <img src="image/Log out.png" alt="Log out">
+                </span>
+                ออกจากระบบ
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <p>ผู้ป่วย</p>
+                <div class="box-right">
+                    <div class="divider"></div>
+                    <a href="user.html" class="icon-link">
+                        <img src="image/User.png" alt="user" class="user-img">
+                    </a>
+                    <button class="New-Patients">
+                        เทคนิค นายหนึ่ง
+                    </button>
+                </div>
+            </header>
+
+            <section class="patient-box">
+                <div class="patient-form">
+                    <div class="head-patient">
+                        <img src="image/Re.png" alt="re" class="re-img">
+                        <div class="form-title">แก้ไขรายละเอียดผลตรวจ</div>
+                    </div>
+
+                    <div class="patient-form2">
+                        <p class="order-id">หมายเลขใบสั่งตรวจ : TR0011</p>
+                        <div class="form-grid">
+                            <div class="column1">
+                                <div class="form-group">
+                                    <label>ชื่อ-นามสกุล (Name) :</label>
+                                    <input type="text" value="นายเทส ทดสอบ">
+                                </div>
+                                <div class="form-group">
+                                    <label>รหัสการตรวจ :</label>
+                                    <input type="text" value="410028">
+                                </div>
+                                <div class="form-group">
+                                    <label>ชื่อการตรวจ :</label>
+                                    <input type="text" value="PGx for Acetaminophen (CYP2D6)">
+                                </div>
+                            </div>
+
+                            <div class="column2">
+                                <div class="form-group">
+                                    <label>เลขประจำตัว (HN) :</label>
+                                    <input type="text" value="HN00001">
+                                </div>
+                                <div class="form-group">
+                                    <label>ชนิดของยาที่จะใช้ในการรักษา :</label>
+                                    <input type="text" placeholder="">
+                                </div>
+                                <div class="form-group">
+                                    <label>ยาที่ผู้ป่วยได้รับในปัจจุบัน :</label>
+                                    <input type="text" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="genotype-section">
+                            <div class="title-genotype">ยีนที่ตรวจ : CYP2D6</div>
+
+                            <div class="genotype-list">
+                                <div class="title-genotype">Genotype :</div>
+                                <div class="genotype-item">
+                                    <span>CYP2C9*2 (430C>T)</span>
+                                    <select>
+                                        <option selected>Selected CYP2C9*2</option>
+                                        <option value="CC">C/C</option>
+                                        <option value="CT">C/T</option>
+                                        <option value="TT">T/T</option>
+                                    </select>
+                                </div>
+                                <div class="genotype-item">
+                                    <span>CYP2C9*3 (1075A>C)</span>
+                                    <select>
+                                        <option selected>Selected CYP2C9*3</option>
+                                        <option value="AA">A/A</option>
+                                        <option value="AC">A/C</option>
+                                        <option value="CC">C/C</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-secondary">บันทึกผลการส่งตรวจ</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="MedicalTechPatient.js"></script>
+</body>
+
+</html>
