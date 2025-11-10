@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../styles/userpage.css'
 import Sidebar from '../components/Sidebar'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function Patients() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [selected, setSelected] = useState(null)
 
   const [patients, setPatients] = useState([
@@ -55,6 +56,17 @@ export default function Patients() {
     setSelected(p)
   }
 
+  // If navigated back from NewPatient with state containing newPatient, insert it
+  useEffect(() => {
+    if (location && location.state && location.state.newPatient) {
+      const np = location.state.newPatient
+      setPatients(prev => [np, ...prev])
+      setSelected(np)
+      // clear navigation state by replacing history entry
+      navigate('/patients', { replace: true })
+    }
+  }, [location])
+
   return (
     <div className="page-patient">
       <Sidebar />
@@ -67,6 +79,7 @@ export default function Patients() {
           <div className="header-actions">
             <div className="user-actions">
               <button className="New-Patients">ข้อมูลผู้ใช้งาน</button>
+              <button className="btn-secondary" style={{ marginLeft: 12 }} onClick={() => navigate('/patients/new')}>+ เพิ่มผู้ป่วยใหม่</button>
             </div>
           </div>
         </div>

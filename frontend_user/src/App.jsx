@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Patients from './pages/Patients'
+import NewPatient from './pages/NewPatient'
 import Reports from './pages/Reports'
 import Order from './pages/Order'
 import Knowledge from './pages/Knowledge'
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
   <Route path="/dashboard" element={<Dashboard />} />
   <Route path="/patients" element={<Patients />} />
+  <Route path="/patients/new" element={<NewPatient />} />
   <Route path="/patients/:id" element={<PatientsDetail />} />
   <Route path="/order-result/:code" element={<OrderResult />} />
   <Route path="/order" element={<Order />} />
