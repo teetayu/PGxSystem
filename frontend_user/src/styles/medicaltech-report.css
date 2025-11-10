@@ -1,0 +1,52 @@
+/* Styles ported from Old_Frontend/เทคนิกการแพทย์/MedicalTechReport.css
+   Only the rules required to make the Reports page look like the legacy layout.
+*/
+
+/* layout wrapper */
+.page-patient { display: flex; flex-direction: row; }
+
+/* header/title */
+.header p { font-weight: bold; font-size: 48px; margin: 10px 0 10px 15px; }
+
+/* top filter box */
+.content-box-one { display: flex; flex-direction: row; align-items: flex-end; gap: 16px; padding: 0 30px; }
+.box-left { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; margin-top: 25px; /* make width responsive to available space so inputs have more room */
+  width: calc(100% - 260px);
+  height: auto; background: linear-gradient(to right, #3a4a3f, #1a9e3e); border-radius: 12px; padding: 18px 22px; gap: 14px 12px; align-items: center; color: #ffffff; font-size: 14px; }
+.column1, .column2, .column3, .column4 { display:flex; flex-direction: column; gap:12px; }
+.box-left label { font-size: 14px; font-weight: bold; margin-right: 5px; }
+.box-left .label-mid { width: auto; margin: 0 6px 0 4px; font-weight: 600; }
+.username-group input[type="text"] { width: 320px; height: 36px; padding: 8px 14px; border-radius: 18px; border: none; background: #fff; color: #333; }
+.username-group input[type="text"]::placeholder { color: #999; }
+
+/* make selects/inputs pill-shaped and wider to match legacy spacing */
+#date-start, #date-end, #position, #time-start, #level, #time-end, #action, #page-name { width: 140px; height: 36px; padding: 6px 12px; border-radius: 18px; border: none; background: #fff; color: #333; }
+
+/* ensure selects inside box-left do not shrink */
+.box-left select, .box-left input { box-shadow: none; }
+
+.box-right2 { display:flex; flex-direction:column; gap:14px; align-items:stretch; }
+.search-button, .clear-button { width:215px; height:44px; border-radius:20px; border:1px solid #8F8C8C; background-color:#FFFFFF; font-weight:bold; font-size:16px; cursor:pointer; transition: all 0.2s ease; }
+.search-button:hover, .clear-button:hover { background-color:#F2F2F2; border-color:#6e6e6e; box-shadow:0 2px 6px rgba(0,0,0,0.1); transform: translateY(-1px); }
+
+/* report box */
+.report-section { width: 95%; height: auto; margin: 28px 0 0 28px; padding: 0 32px 32px; border-radius: 12px; border: 1px solid #000; background-color: #FFFFFF; }
+
+.report-table table { margin-top: 15px; width: 100%; border-collapse: collapse; }
+.report-table thead th { padding: 10px 12px; color: #000; font-weight: bold; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+.report-table tbody td { padding: 10px 12px; color: #1f2937; border-bottom: 2px solid #e5e7eb; }
+
+.report-table thead th:first-child, .report-table tbody td:first-child, .report-table thead th:last-child, .report-table tbody td:last-child { text-align: center; font-size: 18px; }
+.report-table thead th:nth-child(2), .report-table tbody td:nth-child(2), .report-table thead th:nth-child(3), .report-table tbody td:nth-child(3) { text-align: center; font-size: 14px; }
+.report-table thead th:nth-child(4), .report-table tbody td:nth-child(4), .report-table thead th:nth-child(5), .report-table tbody td:nth-child(5) { text-align: center; font-size: 14px; }
+.report-table tbody td:nth-child(6) { text-align:center; vertical-align:middle; }
+
+/* badges and buttons */
+.badge { display:inline-block; padding: 2px 8px; font-size:14px; line-height:1; background:#FFF4E5; color:#FF9317; border:1px solid #FF9317; border-radius:8px; }
+.muted-btn, .select-btn { width:100px; height:26px; background:#e9ecef; border:1px solid #BBBBBB; color:#000; font-size:14px; font-weight:bold; padding:4px 10px; border-radius:6px; cursor:pointer; transition: background .15s ease, transform .04s ease; }
+
+/* small responsive tweak */
+@media (max-width: 1100px) {
+  .box-left { width: 100%; grid-template-columns: 1fr 1fr; height: auto; }
+  .content-box-one { padding: 12px; }
+}
