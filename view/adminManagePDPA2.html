@@ -4,24 +4,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manage-PDPA</title>
-    <link rel="stylesheet" href="css/admin-manage-pdpa.css" />
+    <title>Template & Purpose</title>
+    <link rel="stylesheet" href="css/adminManagePDPA.css" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="admin-manage-pdpa-page">
-        <div class="navbar">
-            <h1>PGx System</h1>
-            <ul>
-                <li class="active"><a href="admin-manage-user.html">จัดการผู้ใช้</a></li>
-                <li class="active-select"><a href="admin-manage-pdpa-2.html">การจัดการ PDPA</a></li>
-                <li class="active"><a href="admin-general-setting.html">ตั้งค่าทั่วไป</a></li>
-                <li class="active"><a href="admin-log-usage.html">Log การเข้าใช้งาน</a></li>
-                <li class="active"><a href="admin-manage-role.html">การจัดการสิทธิ์</a></li>
 
-                <li class="logout"><a href="logout.html">ออกจากระบบ</a></li>
-            </ul>
-        </div>
+    <div class="adminManagePDPAPage">
+        <div class="sidebarAdmin" id="sidebarAdmin"></div>
 
         <div class="main-content">
             <div class="header">
@@ -39,11 +31,11 @@
 
                         <nav>
                             <ul>
-                                <li><a href="admin-manage-pdpa-1.html">e-Consent</a></li>
-                                <li><a href="admin-manage-pdpa-2.html" class="active">Template & Purpose</a></li>
-                                <li><a href="admin-manage-pdpa-3.html">Policy</a></li>
-                                <li><a href="admin-manage-pdpa-4.html">DPIA</a></li>
-                                <li><a href="admin-manage-pdpa-5.html">Breach</a></li>
+                                <li><a href="adminManagePDPA1.html">e-Consent</a></li>
+                                <li><a href="adminManagePDPA2.html" class="active">Template & Purpose</a></li>
+                                <li><a href="adminManagePDPA3.html">Policy</a></li>
+                                <li><a href="adminManagePDPA4.html">DPIA</a></li>
+                                <li><a href="adminManagePDPA5.html">Breach</a></li>
                             </ul>
                         </nav>
 
@@ -80,6 +72,10 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <script src="js/sidebarAdmin.js"></script>
+
 </body>
 
 </html>

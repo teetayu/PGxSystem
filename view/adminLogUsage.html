@@ -5,24 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Usage</title>
+    <link rel="stylesheet" href="css/adminLogUsage.css">
 
-    <link rel="stylesheet" href="css/admin-log-usage.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="admin-log-usage-page">
-        <div class="navbar">
-            <h1>PGx System</h1>
-            <ul>
-                <li class="active"><a href="admin-manage-user.html">จัดการผู้ใช้</a></li>
-                <li class="active"><a href="admin-manage-pdpa-1.html">การจัดการ PDPA</a></li>
-                <li class="active"><a href="admin-general-setting.html">ตั้งค่าทั่วไป</a></li>
-                <li class="active-select"><a href="admin-log-usage.html">Log การเข้าใช้งาน</a></li>
-                <li class="active"><a href="admin-manage-role.html">การจัดการสิทธิ์</a></li>
+    
+    <div class="adminLogUsagePage">
 
-                <li class="logout"><a href="logout.html">ออกจากระบบ</a></li>
-            </ul>
-        </div>
+        <div id="sidebarAdmin"></div>
 
         <div class="main-content">
             <div class="header">
@@ -201,6 +193,9 @@
             </div>
         </div>
     </div>
+
+    <script src="js/sidebarAdmin.js"></script>
+
 </body>
 
 </html>

@@ -5,78 +5,43 @@
     font-family: 'Inter', sans-serif;
 }
 
-.admin-manage-user-page {
+:root {
+    --greenOriginalBottom: linear-gradient(to bottom, #305038, #278133);
+    --greenOriginalRight: linear-gradient(to right, #305038, #278133);
+    --fontColorBlack: rgb(0, 0, 0);
+    --fontColorWhite: rgb(255, 255, 255);
+    --backgroundColor: #E6FFED;
+}
+
+/* headerSetting */
+
+.adminManageUserPage {
     display: flex;
     flex-direction: row;
 }
 
-.navbar {
-    display: flex;
-    flex-direction: column;
-    width: 20%;
-    min-height: 100vh;
-    background: linear-gradient(to bottom, #305038, #278133);
-}
-
-.navbar h1 {
-    color: white;
-    text-align: center;
-    font-size: 48px;
-    margin: 60px 0;
-    flex-shrink: 0;
-}
-
-.navbar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.navbar ul li a {
-    text-decoration: none;
-    color: white;
-    display: block;
-    padding: 20px 40px;
-    font-size: 19px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.navbar ul li.active a:hover,
-.navbar ul li.logout a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.navbar ul li.active-select a {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-right: 7px solid #60DB83;
-}
-
-.navbar ul li.logout {
-    margin-top: auto;
-}
-
 .main-content {
-    width: 80%;
-    height: 100vh;
+    flex-grow: 1;
     overflow-y: auto;
-    background-color: #E6FFED;
+    background-color: var(--backgroundColor);
+    margin-left: 350px;
+    min-height: 100vh;
 }
 
 .header h1 {
     color: black;
     background-color: white;
-    font-size: 40px;
-    padding: 40px 0 40px 30px;
+    font-size: 50px;
+    padding: 40px 40px;
 }
+
+/* contentBox */
 
 .content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 30px;
 }
 
 .content-box {

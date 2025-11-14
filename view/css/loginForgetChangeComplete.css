@@ -5,19 +5,19 @@
     font-family: 'Inter', sans-serif;
 }
 
-.change-password-page {
+.changeCompletePage {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100vw;
     height: 100vh;
-    background-image: url('../img/background-1.png');
+    background-image: url('../img/background.png');
     background-repeat: no-repeat;
     background-size: cover;
     color: white;
 }
 
-.change-password-form {
+.change-complete-form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,7 +31,7 @@
     border: 1.5px solid black;
 }
 
-.change-password-header {
+.change-complete-header {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -39,48 +39,29 @@
     margin-bottom: 50px;
 }
 
-.change-password-header h1 {
+.change-complete-header h1 {
     font-size: 50px;
     font-weight: 700;
     color: green;
     text-align: center;
 }
 
-.change-password-header p {
+.change-complete-header p {
     text-align: center;
     font-weight: bold;
     font-size: 21px;
 }
 
-.box-new-password {
-    width: 75%;
-}
-
-.new-password {
-    display: flex;
-    flex-direction: column;
-}
-
-.new-password input {
-    padding: 15px 35px;
-    border: 1px solid #ccc;
-    border-radius: 25px;
-    background-color: #e6ffed;
-    margin: 15px 0 15px 0;
-    font-size: 16px;
-    border-style: solid;
-    border-color: black;
-}
-
-.confirm-button {
+.login-button {
     margin-top: 15px;
     text-align: center;
 }
 
-.confirm-button button {
+.login-button button {
+    padding: 0 10px 0 10px;
     font-size: 20px;
     font-weight: bold;
-    width: 30%;
+    width: 270px;
     height: 60px;
     background-color: #60DB83;
     border-radius: 100px;

@@ -4,25 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>General-Setting</title>
-    <link rel="stylesheet" href="css/admin-general-setting.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>General Setting</title>
+    <link rel="stylesheet" href="css/adminGeneralSetting.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="admin-general-setting-page">
-        <div class="navbar">
-            <h1>PGx System</h1>
-            <ul>
-                <li class="active"><a href="admin-manage-user.html">จัดการผู้ใช้</a></li>
-                <li class="active"><a href="admin-manage-pdpa-1.html">การจัดการ PDPA</a></li>
-                <li class="active-select"><a href="admin-general-setting.html">ตั้งค่าทั่วไป</a></li>
-                <li class="active"><a href="admin-log-usage.html">Log การเข้าใช้งาน</a></li>
-                <li class="active"><a href="admin-manage-role.html">การจัดการสิทธิ์</a></li>
 
-                <li class="logout"><a href="logout.html">ออกจากระบบ</a></li>
-            </ul>
-        </div>
+    <div class="admin-general-setting-page">
+        <div class="sidebarAdmin" id="sidebarAdmin"></div>
 
         <div class="main-content">
             <div class="header">
@@ -273,6 +264,8 @@
     </div>
 
     <script src="js/admin-general-setting.js"></script>
+
+    <script src="js/sidebarAdmin.js"></script>
 
 </body>
 

@@ -5,69 +5,63 @@
     font-family: 'Inter', sans-serif;
 }
 
-.login-page {
+.changePasswordPage {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
     height: 100vh;
-}
-
-.left {
-    flex: 1;
-    background-image: url('../img/background-login.png');
+    background-image: url('../img/background.png');
     background-repeat: no-repeat;
     background-size: cover;
     color: white;
 }
 
-.welcome-message {
-    padding: 15% 10% 0 10%;
-}
-
-.welcome-message p {
-    font-size: 45px;
-}
-
-.welcome-message h1 {
-    font-size: 60px;
-    font-weight: 700;
-}
-
-.right {
-    flex: 1;
-    background-color: white;
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.box-form {
-    width: 75%;
-}
-
-.login-form {
-    width: 100%;
+.change-password-form {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 45%;
+    height: 50%;
+    border-radius: 15px;
+    padding: 40px;
+    background-color: white;
+    color: black;
+    border: 1.5px solid black;
 }
 
-.login-form h2 {
+.change-password-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.change-password-header h1 {
     font-size: 50px;
     font-weight: 700;
     color: green;
-    margin-bottom: 50px;
     text-align: center;
 }
 
-.login-email,
-.login-password {
+.change-password-header p {
+    text-align: center;
+    font-weight: bold;
+    font-size: 21px;
+}
+
+.box-new-password {
+    width: 75%;
+}
+
+.new-password {
     display: flex;
     flex-direction: column;
 }
 
-.login-email input,
-.login-password input {
+.new-password input {
     padding: 15px 35px;
     border: 1px solid #ccc;
     border-radius: 25px;
@@ -78,18 +72,12 @@
     border-color: black;
 }
 
-.login-forgot-password a {
-    text-decoration: none;
-    color: black;
-}
-
-.login-button {
+.confirm-button {
     margin-top: 15px;
     text-align: center;
 }
 
-.login-button button {
-    margin: 0;
+.confirm-button button {
     font-size: 20px;
     font-weight: bold;
     width: 30%;
