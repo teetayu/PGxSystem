@@ -56,4 +56,3 @@ renderOrder(mockOrder);
 //   .then(res => res.json())
 //   .then(renderOrder)
 //   .catch(console.error);
-
