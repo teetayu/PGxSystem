@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="content-box-two">
-                    <table>
+                    <table id="user-table">
                         <thead>
                             <tr>
                                 <th>ชื่อผู้ใช้</th>
@@ -65,9 +65,10 @@
                                 <th>การแก้ไข</th>
                             </tr>
                         </thead>
-
-                        <tbody>
+                            <tbody id="user-table-body"></tbody>
+                        <!-- <tbody>
                             <tr>
+                                
                                 <td class="font-weight-bold">นายเทส ทดสอบ</td>
                                 <td>login@gmail.com</td>
                                 <td>Lab Manager</td>
@@ -106,7 +107,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        </tbody>
+                        </tbody> -->
                     </table>
                 </div>
 
@@ -167,10 +168,10 @@
                                 <label for="modal-job-role">บทบาท</label>
                                 <div class="input-with-icon">
                                     <select id="modal-job-role">
-                                        <option value="doctor">แพทย์</option>
-                                        <option value="pharmacist">เภสัช</option>
-                                        <option value="medical-staff">นักเทคนิคการแพทย์</option>
-                                        <option value="staff">พนักงาน</option>
+                                        <option value="แพทย์">แพทย์</option>
+                                        <option value="เภสัช">เภสัช</option>
+                                        <option value="นักเทคนิคการแพทย์">นักเทคนิคการแพทย์</option>
+                                        <option value="พนักงาน">พนักงาน</option>
                                     </select>
                                     <span class="field-icon">&#9998;</span>
                                 </div>
