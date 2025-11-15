@@ -134,7 +134,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 50px;
+    padding: 50px 0;
 }
 
 .patient-box {  
@@ -206,7 +206,7 @@
 }
 
 .input1 {
-    width: 670px;
+    width: 680px;
     height: 40px;
     border-radius: 6px;
     border: 1px solid #000;
@@ -226,7 +226,7 @@
     border: 1px solid #000;
     background-color: #FFFFFF;
     padding: 8px 12px 8px 16px;
-    margin-right: 20px;
+    margin-right: 30px;
 }
 
 .input3 {
@@ -242,8 +242,8 @@
     border: 1px solid #000;
     border-radius: 5px;
     padding: 10px 12px 16px;
-    width: 670px;
-    height: 300px;
+    height: 402px;
+    width: 680px;
 }
 
 .sel-title {
@@ -311,9 +311,9 @@
 .chk {
     display: flex;
     align-items: center;
-    font-size: 10px;
+    font-size: 10.5px;
     gap: 5px;
-    margin-bottom: 0.5px;
+    margin: 5px 0;
 }
 
 .form-actions {
@@ -359,7 +359,7 @@
 
 .selected-table {
     width: 400px;
-    height: 460px;
+    height: 562px;
     border: 1px solid #000;
     border-radius: 6px;
     background: #FAFAFA;
@@ -421,7 +421,7 @@
 
 .table tbody {
     position: relative;
-    height: 410px;
+    height: 600px;
     overflow: hidden;
     /* ตัดส่วนเกินของพื้นหลัง */
     /* เอา border ล่างออกเพื่อไม่ให้ชนกับเส้นสุดท้าย */
