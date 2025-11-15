@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage-User</title>
     <link rel="stylesheet" href="css/admin-manage-user.css">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    connect-src 'self' https://*.supabase.co;
+    ">
+
 </head>
 
 <body>
@@ -65,23 +73,19 @@
                                 <th>การแก้ไข</th>
                             </tr>
                         </thead>
-                            <tbody id="user-table-body"></tbody>
-                        <!-- <tbody>
+                        <tbody id="user-table-body">
                             <tr>
-                                
-                                <td class="font-weight-bold">นายเทส ทดสอบ</td>
-                                <td>login@gmail.com</td>
-                                <td>Lab Manager</td>
-                                <td><span class="badge badge-admin">Admin</span></td>
-                                <td>21/10/68</td>
+                                <tbody id="user-table-body"></tbody>
+                                <script src="../renderer.js"></script>
                                 <td>
                                     <div class="action-buttons">
                                         <button class="btn btn-edit">แก้ไข</button>
                                         <button class="btn btn-delete">ลบ</button>
                                     </div>
                                 </td>
+                                 
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class="font-weight-bold">นายเทส ทดสอบ</td>
                                 <td>login@gmail.com</td>
                                 <td>Staff</td>
@@ -93,8 +97,8 @@
                                         <button class="btn btn-delete">ลบ</button>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
+                            </tr> -->
+                            <!-- <tr>
                                 <td class="font-weight-bold">นายเทส ทดสอบ</td>
                                 <td>login@gmail.com</td>
                                 <td>Doctor</td>
@@ -106,8 +110,8 @@
                                         <button class="btn btn-delete">ลบ</button>
                                     </div>
                                 </td>
-                            </tr>
-                        </tbody> -->
+                            </tr> -->
+                        </tbody>
                     </table>
                 </div>
 

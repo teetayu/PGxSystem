@@ -64,7 +64,7 @@ ipcMain.handle('create-user', async (event, userData) => {
 
   // บันทึกลง Supabase
   const { data, error } = await supabase
-    .from('user')
+    .from('users')
     .insert([
       {
         first_name: firstname,
@@ -88,9 +88,10 @@ ipcMain.handle('create-user', async (event, userData) => {
 // Event: ดึงรายชื่อผู้ใช้งานทั้งหมด
 ipcMain.handle('get-users', async () => {
   const { data, error } = await supabase
-    .from('user')
-    .select('id, first_name, last_name, email, role_id, access_id, created_at')
-    .order('created_at', { ascending: false })
+    .from('users')
+    .select('user_id,first_name, last_name, email, role_id, access_id, created_at')
+    .order('user_id', { ascending: true })
+    
 
   if (error) {
     console.error('Supabase get-users Error:', error)
