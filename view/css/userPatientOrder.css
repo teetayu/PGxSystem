@@ -65,71 +65,6 @@
 
 /* ============ Main content เนื้อหา============ */
 
-/* .header {
-    top: 0;
-    right: 0;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #FFFFFF;
-    box-sizing: border-box;
-    padding: 16px 24px;
-    z-index: 60;
-} */
-
-/* .header p {
-    font-weight: bold;
-    font-size: 48px;
-    margin: 10px 0 10px 15px;
-} */
-
-/* .box-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-} */
-
-/* .New-Patients {
-    width: 199px;
-    height: 45px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-    background: #60DB83;
-    color: #000;
-    font-size: 20px;
-    border-radius: 20px;
-    justify-content: center;
-    cursor: pointer;
-    transition: background .2s ease, transform .04s ease;
-    padding: 0 14px;
-    gap: 10px;
-} */
-
-/* .New-Patients:hover {
-    background-color: #8DD88C;
-} */
-
-/* .New-Patients:active {
-    transform: translateY(1px);
-} */
-
-/* .Plus-img {
-    width: 18px;
-    height: 18px;
-    object-fit: contain;
-} */
-
-/* .divider {
-    width: 1px;
-    height: 50px;
-    background: #000;
-    margin: 0 4px 0 2px;
-} */
-
 .patientBig {
     display: flex;
     justify-content: center;
@@ -186,9 +121,7 @@
     font-size: 18px;
     display: flex;
     align-items: center;
-    /* จัดแนวให้อยู่กึ่งกลางบรรทัด */
     gap: 9px;
-    /* เว้นช่องระหว่างหัวข้อกับข้อมูล */
     white-space: nowrap;
 }
 
@@ -261,7 +194,6 @@
     gap: 15px;
 }
 
-/* เส้นคั่นใต้แท็บให้บางและนิ่ง */
 .check-box hr {
     border: none;
     border-top: 1px solid #000;
@@ -274,9 +206,7 @@
     display: flex;
     flex-direction: row;
     background-color: #ffffff;
-    /* พื้นหลังขาว */
     border: none;
-    /* ❌ เอากรอบดำออก */
     border-radius: 6px;
     padding: 8px 4px;
     overflow: hidden;
@@ -291,18 +221,14 @@
 
 .tab-panel {
     display: none;
-    /* ซ่อนไว้ก่อน */
 }
 
 .check-grid {
     display: grid;
     grid-template-columns: 2.5fr 2fr 2fr;
     column-gap: 5px;
-    /* ระยะห่างระหว่างคอลัมน์ */
     row-gap: 6px;
-    /* ระยะห่างระหว่างแถว */
     padding: 10px 6px 6px 10px;
-    /* บน–ขวา–ล่าง–ซ้าย */
 }
 
 .checklist {
@@ -326,14 +252,11 @@
 
 .btn-secondary {
     border: none;
-    /* ❌ เอาขอบออก */
     outline: none;
-    /* ❌ เอาเส้นขอบเวลา focus ออก */
     color: #fff;
     width: 150px;
     height: 45px;
     border-radius: 15px;
-    /* ✅ โค้งมนแบบในภาพ */
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.04s ease;
@@ -378,7 +301,6 @@
     position: relative;
 }
 
-/* คอลัมน์แรก */
 .table thead th:first-child,
 .table tbody td:first-child {
     width: 140px;
@@ -425,12 +347,9 @@
     position: relative;
     height: 600px;
     overflow: hidden;
-    /* ตัดส่วนเกินของพื้นหลัง */
-    /* เอา border ล่างออกเพื่อไม่ให้ชนกับเส้นสุดท้าย */
     border-bottom: none;
 }
 
-/* เส้นแนวนอน “ช่องว่าง” ทั้งหมด วาดด้วย gradient เพียงอย่างเดียว */
 :root {
     --row-h: 28px;
 }
