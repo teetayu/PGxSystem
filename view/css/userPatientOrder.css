@@ -255,6 +255,8 @@
 .test-tabs {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
     font-size: 14px;
     gap: 15px;
 }
