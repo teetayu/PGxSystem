@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.employeeDashboardAddPage {
+    display: flex;
+    flex-direction: row;
+}
+
+.div1 {
+    background: var(--greenOriginalBottom);
+    min-width: 350px;
+}
+
+.div2 {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* StyleTop */
+
+:root {
+    --greenOriginalBottom: linear-gradient(to bottom, #305038, #278133);
+    --greenOriginalRight: linear-gradient(to right, #305038, #278133);
+}
+
+.top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.topLeft {
+    font-size: 24px;
+}
+
+.topRight {
+    font-size: 13px;
+}
+
+.topLeft,
+.topRight {
+    display: flex;
+    align-items: center;
+    margin: 40px;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar h1 {
+    color: white;
+    text-align: center;
+    font-size: 48px;
+    margin: 40px 0;
+    flex-shrink: 0;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: white;
+    display: block;
+    padding: 20px 40px;
+    font-size: 19px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.navbar ul li.active a:hover,
+.navbar ul li.logout a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar ul li.active-select a {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-right: 7px solid #60DB83;
+}
+
+.navbar ul li.logout {
+    margin-top: auto;
+}
+
+/* StyleContentCeter */
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #F7FFF7;
+}
+
+.patient-form-container {
+    height: fit-content;
+    width: 100%;
+    max-width: 1100px;
+    background-color: #ffffff;
+    border: 2px solid #000;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.patient-form-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Sarabun', sans-serif;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.name-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.name-inputs input {
+    flex: 1;
+}
+
+.gender-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.gender-options div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gender-options input[type="radio"] {
+    width: auto;
+    accent-color: #006400;
+}
+
+.gender-options label {
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.date-wrapper {
+    position: relative;
+}
+
+.date-wrapper input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.split-group {
+    display: flex;
+    gap: 10px;
+}
+
+.split-group .form-group {
+    flex: 1;
+}
+
+.form-group.remarks {
+    grid-column: 1 / -1;
+}
+
+.form-group.remarks textarea {
+    height: 90px;
+    resize: vertical;
+}
+
+.form-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    font-family: 'Sarabun', sans-serif;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary {
+    background-color: #006400;
+}
+
+.btn-secondary:hover {
+    background-color: #004d00;
+}
+
+.btn-primary {
+    background-color: #008000;
+}
+
+.btn-primary:hover {
+    background-color: #006400;
+}
