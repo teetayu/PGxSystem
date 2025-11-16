@@ -1,182 +1,176 @@
+// ---------------------------------------------
+// GLOBAL VARIABLE
+// ---------------------------------------------
+let editingUserId = null;
+
+// ---------------------------------------------
 // 1. เลือกองค์ประกอบ (Element) ที่ต้องใช้
+// ---------------------------------------------
 const modalOverlay = document.getElementById('user-modal-overlay');
 const closeModalBtn = document.getElementById('close-modal-btn');
-const modalTitle = document.getElementById('modal-title'); // หัวข้อ Pop-up
+const modalTitle = document.getElementById('modal-title');
 
-// 2. เลือก "ปุ่ม" ที่จะใช้เปิด Modal
-const createUserBtn = document.querySelector('.add-user-button'); // ปุ่ม "Create New user"
-const editButtons = document.querySelectorAll('.btn-edit'); // ปุ่ม "แก้ไข" ทั้งหมด
+const createUserBtn = document.querySelector('.add-user-button');
 const confirmBtn = document.querySelector('.confirm-btn');
 
-// 3. เลือก "ช่องกรอกข้อมูล" ใน Pop-up
 const modalFirstname = document.getElementById('modal-firstname');
 const modalLastname = document.getElementById('modal-lastname');
 const modalEmail = document.getElementById('modal-email');
 const modalPassword = document.getElementById('modal-password');
-const modalJobRole = document.getElementById('modal-job-role'); // เพิ่ม
-const modalAccessLevel = document.getElementById('modal-access-level'); // เปลี่ยน
+const modalJobRole = document.getElementById('modal-job-role');
+const modalAccessLevel = document.getElementById('modal-access-level');
 const modalConfirmPassword = document.getElementById('modal-confirm-password');
 
-const tableBody = document.getElementById('user-table-body');
-const roleLabel = { 1: 'แพทย์', 2: 'เภสัช', 3: 'นักเทคนิคการแพทย์', 4: 'พนักงาน' };
-const accessLabel = { 1: 'Admin', 2: 'User' };
-
-// 4. ฟังก์ชันสำหรับ "ปิด" Modal (เหมือนเดิม)
+// ---------------------------------------------
+// ฟังก์ชันปิด Modal
+// ---------------------------------------------
 function closeTheModal() {
-    modalOverlay.style.display = 'none'; // ซ่อน Pop-up
+    modalOverlay.style.display = "none";
+    editingUserId = null; // reset โหมดแก้ไข
 }
 
-// 5. สั่งให้ปุ่ม "รอฟัง" การคลิก
-
 // ---------------------------------------------
-// เมื่อคลิกปุ่ม "Create New user"
+// 2. เปิด Modal เพื่อ "เพิ่มผู้ใช้ใหม่"
 // ---------------------------------------------
-createUserBtn.addEventListener('click', function() {
-    // 1. ลบคลาส "editing" เพื่อ "ซ่อน" ไอคอน
-    modalOverlay.classList.remove('modal-is-editing');
-    
-    // 2. ตั้งหัวข้อ
-    modalTitle.textContent = 'เพิ่มข้อมูลผู้ใช้งาน';
-    
-    // 3. ล้างฟอร์มให้ว่างทั้งหมด (และใส่ placeholder)
-    modalFirstname.value = '';
-    modalFirstname.placeholder = '';
-    modalLastname.value = '';
-    modalLastname.placeholder = '';
-    modalEmail.value = '';
-    modalEmail.placeholder = '';
-    modalPassword.value = '';
-    modalPassword.placeholder = ''; // รหัสผ่านไม่ต้องมี placeholder
-    modalJobRole.value = ''; // ตั้งค่าเริ่มต้น
-    modalAccessLevel.value = ''; // ตั้งค่าเริ่มต้น
-    modalConfirmPassword.value = '';
-    modalConfirmPassword.placeholder = ''; // รหัสผ่านไม่ต้องมี placeholder
+createUserBtn.addEventListener("click", function () {
 
-    // 4. เปิด Pop-up
-    modalOverlay.style.display = 'flex';
+    modalOverlay.classList.remove("modal-is-editing");
+    modalTitle.textContent = "เพิ่มข้อมูลผู้ใช้งาน";
+
+    modalFirstname.value = "";
+    modalLastname.value = "";
+    modalEmail.value = "";
+    modalPassword.value = "";
+    modalConfirmPassword.value = "";
+    modalJobRole.value = "";
+    modalAccessLevel.value = "";
+
+    editingUserId = null;
+
+    modalOverlay.style.display = "flex";
 });
 
 // ---------------------------------------------
-// เมื่อคลิกปุ่ม "แก้ไข" (ปุ่มใดก็ตาม)
+// 3. เปิด Modal เพื่อ "แก้ไขผู้ใช้"
+// (ใช้ Event Delegation เพราะปุ่มถูกสร้าง dynamic)
 // ---------------------------------------------
-editButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        // 1. เพิ่มคลาส "editing" เพื่อ "แสดง" ไอคอน
-        modalOverlay.classList.add('modal-is-editing');
+document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("btn-edit")) return;
 
-        // 2. ตั้งหัวข้อ
-        modalTitle.textContent = 'แก้ไขข้อมูลผู้ใช้งาน';
-        
-        // 3. (สำหรับอนาคต) ดึงข้อมูลเก่ามาใส่
-        // (ตัวอย่างสมมติ)
-        modalFirstname.value = 'เทส'; // ดึงชื่อจริง
-        modalFirstname.placeholder = 'ชื่อจริง';
-        modalLastname.value = 'ทดสอบ'; // ดึงนามสกุล
-        modalLastname.placeholder = 'นามสกุล';
-        modalEmail.value = 'login@gmail.com';
-        modalEmail.placeholder = 'login@gmail.com';
-        modalPassword.value = '●●●●●●●●';
-        modalPassword.placeholder = '';
-        modalJobRole.value = 'pharmacist'; // ดึงบทบาท
-        modalAccessLevel.value = 'user'; // ดึงระดับ
-        modalConfirmPassword.value = '●●●●●●●●';
-        modalConfirmPassword.placeholder = '';
+    const userId = e.target.getAttribute("data-id");
+    editingUserId = userId;
 
-        // 4. เปิด Pop-up
-        modalOverlay.style.display = 'flex';
-    });
+    modalOverlay.classList.add("modal-is-editing");
+    modalTitle.textContent = "แก้ไขข้อมูลผู้ใช้งาน";
+
+    // ดึงข้อมูล user จาก Store (มาจาก renderer.js)
+    const user = Store.users.find(u => u.user_id == userId);
+
+    modalFirstname.value = user.first_name;
+    modalLastname.value = user.last_name;
+    modalEmail.value = user.email;
+
+    modalJobRole.value = user.role_id;
+    modalAccessLevel.value = user.access_id;
+
+    modalPassword.value = "";
+    modalConfirmPassword.value = "";
+
+    modalOverlay.style.display = "flex";
 });
 
 // ---------------------------------------------
-// การปิด Pop-up (เหมือนเดิม)
+// 4. ปิด Modal
 // ---------------------------------------------
-
-// เมื่อคลิกปุ่ม 'X'
 closeModalBtn.addEventListener('click', closeTheModal);
 
-// (ทางเลือก) เมื่อคลิกที่พื้นหลังสีเทา ให้ปิด Pop-up ด้วย
-window.addEventListener('click', function (event) {
-    if (event.target == modalOverlay) {
+window.addEventListener("click", function (event) {
+    if (event.target === modalOverlay) {
         closeTheModal();
     }
 });
 
-// ...existing code...
 // ---------------------------------------------
-// เมื่อคลิกปุ่ม "ยืนยัน" ให้ส่งข้อมูลไปยัง main process
+// 5. ปุ่ม "ยืนยัน"
 // ---------------------------------------------
+confirmBtn.addEventListener('click', async function (event) {
+    event.preventDefault();
+    
+    // ดึงค่าจาก input ก่อนทุกอย่าง
+    const firstname = modalFirstname.value.trim();
+    const lastname = modalLastname.value.trim();
+    const email = modalEmail.value.trim();
+    const password = modalPassword.value.trim();
+    const confirmPassword = modalConfirmPassword.value.trim();
+    const jobRole = modalJobRole.value;
+    const accessLevel = modalAccessLevel.value;
 
-if (confirmBtn) {
-    confirmBtn.addEventListener('click', async function (event) {
-        event.preventDefault();
+    const roleMap = { แพทย์: 1, เภสัช: 2, นักเทคนิคการแพทย์: 3, พนักงาน: 4 };
+    const accessMap = { admin: 1, user: 2 };
 
-        if (!window.electronAPI || typeof window.electronAPI.createUser !== 'function') {
-            console.error('electronAPI.createUser is not available');
-            alert('ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง');
-            return;
-        }
+    const selectedRole = roleMap[jobRole] ?? 4;       // default = พนักงาน
+    const selectedAccess = accessMap[accessLevel.toLowerCase()] ?? 2; // default = User
+    // Validate inputs
+    if (!firstname || !lastname || !email || !jobRole || !accessLevel) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        return;
+    }
 
-        if (modalOverlay.classList.contains('modal-is-editing')) {
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const userId = btn.dataset.id;
-                const user = users.find(u => u.user_id === parseInt(userId));
-                openEditForm(user);
-            });
-            });
-            async function updateUser(updatedUser) {
-            const result = await window.electronAPI.updateUser(updatedUser);
-            if (result.success) {
-                alert('อัปเดตข้อมูลสำเร็จ');
-                loadUsers(); // โหลดข้อมูลใหม่
-            } else {
-                alert('เกิดข้อผิดพลาด: ' + result.error);
-            }
-            }
-            // alert('ฟังก์ชันแก้ไขยังไม่พร้อมใช้งาน');
-            return;
-        }
 
-        const firstname = modalFirstname.value.trim();
-        const lastname = modalLastname.value.trim();
-        const email = modalEmail.value.trim();
-        const password = modalPassword.value;
-        const confirmPassword = modalConfirmPassword.value;
-        const jobRole = modalJobRole.value;
-        const accessLevel = modalAccessLevel.value;
+    // ---------------------------------------------
+    // MODE : EDIT USER
+    // ---------------------------------------------
+    if (modalOverlay.classList.contains('modal-is-editing')) {
+    const updatedUser = {
+        user_id: editingUserId,
+        first_name: firstname,
+        last_name: lastname,
+        email: email,
+        role_id: Number(selectedRole),
+        access_id: Number(selectedAccess)
+    };
 
-        if (!firstname || !lastname || !email || !password || !confirmPassword || !jobRole || !accessLevel) {
-            alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-            return;
-        }
+    const response = await window.electronAPI.updateUser(updatedUser);
+    if (response.success) {
+        alert("แก้ไขข้อมูลผู้ใช้งานสำเร็จ");
+        closeTheModal();
+        await loadUsers();
+    } else {
+        alert(response.error || "ไม่สามารถแก้ไขข้อมูลผู้ใช้ได้");
+    }
 
-        if (password !== confirmPassword) {
-            alert('รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
-            return;
-        }
-
-        try {
-            const response = await window.electronAPI.createUser({
-                firstname,
-                lastname,
-                email,
-                password,
-                job_role: jobRole,
-                access_level: accessLevel
-            });
-
-                        if (response && response.success) {
-                                alert('เพิ่มผู้ใช้เรียบร้อยแล้ว');
-                                closeTheModal();
-                                await loadUsers();
-                        } else {
-                const message = response && response.message ? response.message : 'ไม่สามารถเพิ่มผู้ใช้ได้';
-                alert(message);
-            }
-        } catch (error) {
-            console.error('Failed to create user:', error);
-            alert('เกิดข้อผิดพลาดในการเพิ่มผู้ใช้');
-        }
-    });
+    return;
 }
+
+
+    // ---------------------------------------------
+    // MODE : CREATE USER
+    // ---------------------------------------------
+    if (!password || !confirmPassword) {
+        alert("กรุณากรอกรหัสผ่าน");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน");
+        return;
+    }
+
+    const response = await window.electronAPI.createUser({
+        firstname,
+        lastname,
+        email,
+        password,
+        job_role: jobRole,
+        access_level: accessLevel
+    });
+
+    if (response.success) {
+        alert("เพิ่มผู้ใช้เรียบร้อยแล้ว");
+        closeTheModal();
+        await loadUsers();
+    } else {
+        alert(response.message || "ไม่สามารถเพิ่มผู้ใช้ได้");
+    }
+});
 

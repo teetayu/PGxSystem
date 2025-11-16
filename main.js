@@ -116,6 +116,29 @@ ipcMain.handle('update-user', async (event, updatedUser) => {
   if (error) return { success: false, error: error.message };
   return { success: true, data };
 });
+// Event: ลบผู้ใช้งาน
+ipcMain.handle('delete-user', async (event, userId) => {
+  console.log("Deleting user ID:", userId);
+
+  if (!userId) {
+    return { success: false, message: "userId ไม่ถูกต้อง" };
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .delete()
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error("Supabase delete-user error:", error);
+    return { success: false, message: error.message };
+  }
+
+  console.log("Deleted user:", data);
+  return { success: true, data };
+  });
+
+
 
 
 app.whenReady().then(createWindow)

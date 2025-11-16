@@ -1,10 +1,8 @@
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron');
 
-
-
-// Expose a limited API to the renderer process
 contextBridge.exposeInMainWorld('electronAPI', {
-  createUser: (payload) => ipcRenderer.invoke('create-user', payload),
-  getUsers: () => ipcRenderer.invoke('get-users')
-})
-
+    getUsers: () => ipcRenderer.invoke('get-users'),
+    createUser: (userData) => ipcRenderer.invoke('create-user', userData),
+    updateUser: (userData) => ipcRenderer.invoke('update-user', userData),
+    deleteUser: (userId) => ipcRenderer.invoke('delete-user', userId) // ต้องมี
+});
