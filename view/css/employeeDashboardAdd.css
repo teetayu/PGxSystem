@@ -46,7 +46,7 @@
 .topRight {
     display: flex;
     align-items: center;
-    margin: 40px;
+    padding: 25px 40px;
 }
 
 .div2 {
@@ -63,8 +63,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    background-color: #F7FFF7;
 }
 
 .patient-form-container {
@@ -75,6 +73,7 @@
     border: 2px solid #000;
     border-radius: 15px;
     padding: 25px;
+    margin: 50px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 

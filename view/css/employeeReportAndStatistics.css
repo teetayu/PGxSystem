@@ -5,33 +5,33 @@
     font-family: 'Inter', sans-serif;
 }
 
-.employeeReportAndStatisticsPage {
+:root {
+    --greenOriginalBottom: linear-gradient(to bottom, #305038, #278133);
+    --greenOriginalRight: linear-gradient(to right, #305038, #278133);
+    --fontColorBlack: rgb(0, 0, 0);
+    --fontColorWhite: rgb(255, 255, 255);
+    --backgroundColor: #E6FFED;
+}
+
+/* headerSetting */
+
+.employeeDashboardPage {
     display: flex;
     flex-direction: row;
 }
 
-.div1 {
-    background: var(--greenOriginalBottom);
-    min-width: 350px;
-}
-
-.div2 {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-/* StyleTop */
-
-:root {
-    --greenOriginalBottom: linear-gradient(to bottom, #305038, #278133);
-    --greenOriginalRight: linear-gradient(to right, #305038, #278133);
+.header h1 {
+    color: black;
+    background-color: white;
+    font-size: 50px;
+    padding: 25px 40px;
 }
 
 .top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    background-color: #fff;
 }
 
 .topLeft {
@@ -46,67 +46,28 @@
 .topRight {
     display: flex;
     align-items: center;
-    margin: 40px;
+    padding: 25px 40px;
 }
 
-.navbar {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.navbar h1 {
-    color: white;
-    text-align: center;
-    font-size: 48px;
-    margin: 40px 0;
-    flex-shrink: 0;
-}
-
-.navbar ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
+.div2 {
     flex-grow: 1;
-}
-
-.navbar ul li a {
-    text-decoration: none;
-    color: white;
-    display: block;
-    padding: 20px 40px;
-    font-size: 19px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.navbar ul li.active a:hover,
-.navbar ul li.logout a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.navbar ul li.active-select a {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-right: 7px solid #60DB83;
-}
-
-.navbar ul li.logout {
-    margin-top: auto;
+    overflow-y: auto;
+    margin-left: 350px;
+    min-height: 100vh;
+    background-color: var(--backgroundColor);
 }
 
 /* StyleContentCeter */
 
 .center {
-    background-color: #F7FFF7;
     color: #333;
-    padding: 20px;
+    margin: 40px 40px;
 }
 
 /* --- Layout --- */
 .dashboard-container {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    /* 2/3 column for main, 1/3 for sidebar */
     gap: 20px;
     max-width: 1400px;
     margin: 0 auto;

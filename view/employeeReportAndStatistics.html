@@ -7,9 +7,9 @@
     <title>Employee ReportAndStatistics</title>
     <link rel="stylesheet" href="css/employeeReportAndStatistics.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
 
@@ -18,19 +18,7 @@
     <div class="employeeReportAndStatisticsPage">
 
         <div class="div1">
-            <div class="navbar">
-                <h1>PGx System</h1>
-                <ul>
-                    <li class="active"><a href="employeeDashboard.html">Dashboard</a></li>
-                    <li class="active"><a href="#">หน้ารวมผู้ป่วย</a></li>
-                    <li class="active"><a href="#">รายงานผล</a></li>
-                    <li class="active"><a href="employeeQualityControl.html">ควบคุมคุณภาพ</a></li>
-                    <li class="active-select"><a href="employeeReportAndStatistics.html">รายงานและสถิติ</a></li>
-
-                    <li class="logout"><a href="login-main.html">ออกจากระบบ</a></li>
-                </ul>
-            </div>
-
+            <div class="sidebarEmployee" id="sidebarEmployee"></div>
         </div>
 
         <div class="div2">
@@ -222,6 +210,8 @@
 
         </div>
     </div>
+
+    <script src="js/sidebarEmployee.js"></script>
 
 </body>
 

@@ -46,7 +46,7 @@
 .topRight {
     display: flex;
     align-items: center;
-    margin: 40px;
+    padding: 25px 40px;
 }
 
 .div2 {
@@ -64,7 +64,7 @@
 }
 
 .centerOne h1 {
-    margin: 20px 40px;
+    margin: 20px 40px 0;
 }
 
 .component-wrapper {
