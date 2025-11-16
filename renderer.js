@@ -38,6 +38,20 @@ function renderUsers(users) {
   if (!table) return;
 
   table.innerHTML = "";
+  
+const accessMap = {
+  1: { text: 'Admin', class: 'badge-admin' },
+  2: { text: 'User', class: 'badge-user' },
+  3: { text: 'Manager', class: 'badge-manager' }
+};
+
+const roleMap = {
+  1: 'แพทย์',
+  2: 'เภสัช',
+  3: 'นักเทคนิคการแพทย์',
+  4: 'พนักงาน'
+};
+
 
   users.forEach(u => {
     table.innerHTML += `
@@ -45,8 +59,8 @@ function renderUsers(users) {
         
         <td>${u.first_name} ${u.last_name}</td>
         <td>${u.email}</td>
-        <td>${u.role_id}</td>
-        <td>${u.access_id}</td>
+        <td>${roleMap[u.role_id] || 'ไม่ทราบ'}</td>
+        <td><span class="badge ${accessMap[u.access_id]?.class || 'badge-default'}">${accessMap[u.access_id]?.text || 'Unknown'}</span></td>
         <td>${new Date(u.created_at).toISOString().split('T')[0]}</td>
       </tr>
     `;

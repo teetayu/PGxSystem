@@ -117,7 +117,23 @@ if (confirmBtn) {
         }
 
         if (modalOverlay.classList.contains('modal-is-editing')) {
-            alert('ฟังก์ชันแก้ไขยังไม่พร้อมใช้งาน');
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const userId = btn.dataset.id;
+                const user = users.find(u => u.user_id === parseInt(userId));
+                openEditForm(user);
+            });
+            });
+            async function updateUser(updatedUser) {
+            const result = await window.electronAPI.updateUser(updatedUser);
+            if (result.success) {
+                alert('อัปเดตข้อมูลสำเร็จ');
+                loadUsers(); // โหลดข้อมูลใหม่
+            } else {
+                alert('เกิดข้อผิดพลาด: ' + result.error);
+            }
+            }
+            // alert('ฟังก์ชันแก้ไขยังไม่พร้อมใช้งาน');
             return;
         }
 

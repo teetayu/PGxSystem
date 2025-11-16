@@ -100,6 +100,23 @@ ipcMain.handle('get-users', async () => {
 
   return data ?? []
 })
+// App พร้อมใช้งาน
+ipcMain.handle('update-user', async (event, updatedUser) => {
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      first_name: updatedUser.first_name,
+      last_name: updatedUser.last_name,
+      email: updatedUser.email,
+      role_id: updatedUser.role_id,
+      access_id: updatedUser.access_id
+    })
+    .eq('user_id', updatedUser.user_id);
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+});
+
 
 app.whenReady().then(createWindow)
 
