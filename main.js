@@ -144,34 +144,97 @@ ipcMain.handle('delete-user', async (event, userId) => {
 
   //login event
  ipcMain.handle('login', async (event, { email, password }) => {
-    const { data: users, error } = await supabase
+    const { data: user, error } = await supabase
         .from('users')
         .select('*')
         .ilike('email', email)
         .single();
 
-    if (error || !users) {
+    if (error || !user) {
         return { success: false, message: "Email ไม่ถูกต้อง" };
     }
 
-    const match = await bcrypt.compare(password, users.password_hash);
+    const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
         return { success: false, message: "รหัสผ่านไม่ถูกต้อง" };
     }
 
+    // ✅ เพิ่ม flag สำหรับ admin
+    const isAdmin = email.toLowerCase() === 'admin@gmail.com';
+
     return {
         success: true,
+        isAdmin, // ส่งไปให้ renderer
         user: {
-            user_id: users.user_id,
-            first_name: users.first_name,
-            last_name: users.last_name,
-            role_id: users.role_id,
-            access_id: users.access_id
+            user_id: user.user_id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            role_id: user.role_id,
+            access_id: user.access_id
         }
     };
 });
 
+//new patient section start
+ipcMain.handle('create-patient', async (event, patientData) => {
+    try {
+        // หา physician_id จากชื่อ
+        const { data: physicianData } = await supabase
+            .from('physicians')
+            .select('physician_id')
+            .ilike('name', patientData.physician)
+            .single();
 
+        // หา hospital_id จากชื่อ
+        const { data: hospitalData } = await supabase
+            .from('hospitals')
+            .select('hospital_id')
+            .ilike('name', patientData.hospital)
+            .single();
+
+        const { data, error } = await supabase
+            .from('patients')
+            .insert([{
+                hospital_number: patientData.id_number, // หรือใช้ HN ที่ generate
+                fname: patientData.fname,
+                lname: patientData.lname,
+                age: patientData.age,
+                gender: patientData.gender,
+                id_number: patientData.id_number,
+                phone_number: patientData.phone_number,
+                physician_id: physicianData?.physician_id || null,
+                hospital_id: hospitalData?.hospital_id || null,
+                request_date: patientData.request_date,
+                report_date: patientData.report_date,
+                weight: patientData.weight,
+                height: patientData.height,
+                annotation: patientData.annotation
+            }]);
+
+        if (error) {
+            console.error('Insert error:', error);
+            return { success: false, message: error.message };
+        }
+
+        return { success: true, message: 'Patient added successfully', data };
+    } catch (err) {
+        console.error('Create patient error:', err);
+        return { success: false, message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' };
+    }
+});
+  
+//error handling
+win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+        responseHeaders: {
+            ...details.responseHeaders,
+            'Content-Security-Policy': [
+                "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+            ]
+        }
+    });
+});
+app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 
 

@@ -241,11 +241,12 @@ if (searchForm) {
 // document.getElementById("role").addEventListener("change", applyFilters);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("login-btn");
-  if (!loginBtn) {
-    console.error("loginBtn not found");
-    return;
-  }
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+        loginBtn.addEventListener("click", async () => {
+            // login logic
+        });
+    }
 
   loginBtn.addEventListener("click", async () => {
     const email = document.getElementById("email").value;
@@ -260,19 +261,37 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await window.electronAPI.login(email, password);
 
+      
       if (!res.success) {
-        alert(res.message);
-        return;
+          alert(res.message);
+          return;
       }
 
-      localStorage.setItem("loginUser", JSON.stringify(res.user));
-      switch (res.user.role_id) {
-        case 1: window.location.href = "doctor-main.html"; break;
-        case 2: window.location.href = "pharmacist-main.html"; break;
-        case 3: window.location.href = "C:\\GitHub Desktop\\PGxSystem\\เทคนิกการแพทย์\\MedicalTechDoctor.html"; break;
-        case 4: window.location.href = "staff-main.html"; break;
-        default: alert("role_id ไม่ถูกต้อง"); break;
+      // ✅ ถ้าเป็น admin ให้ไปหน้า admin-manage-user.html
+      if (res.isAdmin) {
+          window.location.href = "C:\\GitHub Desktop\\PGxSystem\\view\\admin-manage-user.html";
+          return;
       }
+
+      // ถ้าไม่ใช่ admin ใช้ role_id ตัดสินใจ
+      switch (res.user.role_id) {
+          case 1:
+              window.location.href = "doctor-main.html";
+              break;
+          case 2:
+              window.location.href = "pharmacist-main.html";
+              break;
+          case 3:
+              window.location.href = "C:\\GitHub Desktop\\PGxSystem\\เทคนิกการแพทย์\\MedicalTechDoctor.html";
+              break;
+          case 4:
+              window.location.href = "C:\\GitHub Desktop\\PGxSystem\\User page\\Userpage_patientnew.html";
+              break;
+          default:
+              alert("role_id ไม่ถูกต้อง");
+              break;
+      }
+
     } catch (err) {
       console.error("Login failed:", err);
       alert("เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
@@ -281,6 +300,38 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 //login section end
 
+//new patient section start
+document.getElementById('patientForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+        fname: document.querySelector('[name="firstName"]').value,
+        lname: document.querySelector('[name="lastName"]').value,
+        age: parseInt(document.querySelector('[name="age"]').value),
+        gender: document.querySelector('[name="gender"]:checked')?.value,
+        id_number: document.querySelector('[name="Idnumber"]').value,
+        phone_number: document.querySelector('[name="phone"]').value,
+        physician: document.querySelector('[name="physician"]').value,
+        hospital: document.querySelector('[name="hospital"]').value,
+        request_date: document.querySelector('[name="requestDate"]').value,
+        report_date: document.querySelector('[name="reportedDate"]').value,
+        weight: parseFloat(document.querySelector('[name="weightKg"]').value),
+        height: parseFloat(document.querySelector('[name="heightCm"]').value),
+        annotation: document.querySelector('[name="text"]').value
+    };
+
+    try {
+        const res = await window.electronAPI.createPatient(data);
+        if (res.success) {
+            alert('บันทึกข้อมูลสำเร็จ');
+        } else {
+            alert('เกิดข้อผิดพลาด: ' + res.message);
+        }
+    } catch (err) {
+        console.error('Error saving patient:', err);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    }
+});
 
 
 
