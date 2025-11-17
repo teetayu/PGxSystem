@@ -248,8 +248,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loginBtn.addEventListener("click", async () => {
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    
 
     if (!email || !password) {
       alert("กรุณากรอกอีเมลและรหัสผ่าน");
@@ -268,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
       switch (res.user.role_id) {
         case 1: window.location.href = "doctor-main.html"; break;
         case 2: window.location.href = "pharmacist-main.html"; break;
-        case 3: window.location.href = "เทคนิกการแพทย์/MedicalTechDoctor.html"; break;
+        case 3: window.location.href = "C:\\GitHub Desktop\\PGxSystem\\เทคนิกการแพทย์\\MedicalTechDoctor.html"; break;
         case 4: window.location.href = "staff-main.html"; break;
         default: alert("role_id ไม่ถูกต้อง"); break;
       }
@@ -278,6 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+//login section end
 
 
 

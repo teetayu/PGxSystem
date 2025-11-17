@@ -1,8 +1,6 @@
 // โหลดค่า .env
 require('dotenv').config()
-webPreferences: {
-    devTools: false
-}
+
 
 // Modules ที่ต้องใช้
 const { app, BrowserWindow, ipcMain } = require('electron')
@@ -145,35 +143,34 @@ ipcMain.handle('delete-user', async (event, userId) => {
   });
 
   //login event
-  ipcMain.handle('login', async (event, { email, password }) => {
-  const emailTrimmed = email.trim();
+ ipcMain.handle('login', async (event, { email, password }) => {
+    const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('email', email)
+        .single();
 
-  const { data: user, error } = await supabase
-    .from('users')
-    .select('user_id, first_name, last_name, email, password_hash, role_id, access_id')
-    .ilike('email', emailTrimmed)
-    .single();
-
-  if (error || !user) {
-    return { success: false, message: "Email ไม่ถูกต้อง" };
-  }
-
-  const match = await bcrypt.compare(password, user.password_hash);
-  if (!match) {
-    return { success: false, message: "รหัสผ่านไม่ถูกต้อง" };
-  }
-
-  return {
-    success: true,
-    user: {
-      user_id: user.user_id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      role_id: user.role_id,  // <── ใช้เลือกหน้าเว็บ
-      access_id: user.access_id // <── ใช้ตรวจ admin
+    if (error || !users) {
+        return { success: false, message: "Email ไม่ถูกต้อง" };
     }
-  };
+
+    const match = await bcrypt.compare(password, users.password_hash);
+    if (!match) {
+        return { success: false, message: "รหัสผ่านไม่ถูกต้อง" };
+    }
+
+    return {
+        success: true,
+        user: {
+            user_id: users.user_id,
+            first_name: users.first_name,
+            last_name: users.last_name,
+            role_id: users.role_id,
+            access_id: users.access_id
+        }
+    };
 });
+
 
 
 
