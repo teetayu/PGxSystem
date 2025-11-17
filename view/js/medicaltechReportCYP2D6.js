@@ -29,6 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("บันทึก genotype แล้ว:", data);
 
         // ไปหน้า detail
-        window.location.href = "MedicalTechCYP2D6-detail.html";
+        window.location.href = "medicaltechReportCYP2D6Detail.html";
     });
 });

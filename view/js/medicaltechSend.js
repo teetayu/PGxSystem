@@ -153,7 +153,7 @@ btnPrint.addEventListener('click', () => {
     } else {
         sessionStorage.removeItem('selectedOrder');
     }
-    window.location.href = 'MedicalTechBarcode.html';
+    window.location.href = 'medicaltechSendBarcode.html';
 });
 
 btnViewOrder.addEventListener('click', () => {
@@ -174,9 +174,5 @@ btnViewOrder.addEventListener('click', () => {
     });
 
     // ✅ ไปหน้า Pre-Doctor.html พร้อมส่งพารามิเตอร์
-    window.location.href = `MedicalTechDoctor.html?${params.toString()}`;
+    window.location.href = `medicaltechSendDoctor.html?${params.toString()}`;
 });
-
-
-
-
