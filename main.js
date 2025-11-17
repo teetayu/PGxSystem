@@ -1,5 +1,8 @@
 // โหลดค่า .env
 require('dotenv').config()
+webPreferences: {
+    devTools: false
+}
 
 // Modules ที่ต้องใช้
 const { app, BrowserWindow, ipcMain } = require('electron')
@@ -42,6 +45,9 @@ function createWindow() {
   win.loadFile(path.join(__dirname, 'view', 'admin-manage-user.html')).catch((err) => {
     console.error('Failed to load admin-manage-user.html:', err)
   })
+  //  win.loadFile(path.join(__dirname, 'view', 'login-main.html')).catch((err) => {
+  //   console.error('Failed to load login-main.html:', err)
+  // })
 
   win.on('closed', () => {
     // no-op placeholder to retain reference until closed
@@ -137,6 +143,37 @@ ipcMain.handle('delete-user', async (event, userId) => {
   console.log("Deleted user:", data);
   return { success: true, data };
   });
+
+  //login event
+  ipcMain.handle('login', async (event, { email, password }) => {
+  const emailTrimmed = email.trim();
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('user_id, first_name, last_name, email, password_hash, role_id, access_id')
+    .ilike('email', emailTrimmed)
+    .single();
+
+  if (error || !user) {
+    return { success: false, message: "Email ไม่ถูกต้อง" };
+  }
+
+  const match = await bcrypt.compare(password, user.password_hash);
+  if (!match) {
+    return { success: false, message: "รหัสผ่านไม่ถูกต้อง" };
+  }
+
+  return {
+    success: true,
+    user: {
+      user_id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role_id: user.role_id,  // <── ใช้เลือกหน้าเว็บ
+      access_id: user.access_id // <── ใช้ตรวจ admin
+    }
+  };
+});
 
 
 

@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="css/login-main.css">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+
 </head>
 
 <body>
@@ -20,12 +24,12 @@
             </div>
         </div>
         <!-- End of Welcome Message -->
-
+        
         <!-- Login Form -->
         <div class="right">
             <div class="login-form">
                 <h2>Login</h2>
-                <form class="box-form" action="" method="">
+                <form class="box-form" id="login-form" action="" method="post">
                     <div class="login-email">
                         <label for="email">E-mail</label>
                         <input type="email" id="email" placeholder="Enter your email" required>
@@ -40,8 +44,8 @@
                     </div>
 
                     <!-- Login Button -->
-                    <div class="login-button">
-                        <button type="button" class="">LOGIN</button>
+                    <div class="login-button">     
+                        <button type="button" id="login-btn">LOGIN</button>
                     </div>
                     <!-- End of Login Button -->
                 </form>
@@ -51,6 +55,9 @@
 
     </div>
     <!-- End of Login Page -->
-</body>
 
+    <!-- โหลด JS หลัง body -->
+    <script src="../renderer.js"></script>
+</body>
 </html>
+    

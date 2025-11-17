@@ -169,9 +169,121 @@ function renderUsers(users) {
 
 }
 
+
+
+// ฟังก์ชันกรองผู้ใช้ตาม role
+//
+// function filterUsersByRole() {
+//   const roleSelect = document.getElementById("role");
+//   const selected = roleSelect.value;
+
+//   let filteredUsers = Store.getUsers();
+
+//   if (selected === "admin") {
+//     filteredUsers = filteredUsers.filter(u => u.access_id === 1);
+//   } 
+//   else if (selected === "user") {
+//     filteredUsers = filteredUsers.filter(u => u.access_id === 2);
+//   }
+
+//   renderUsers(filteredUsers);
+// }
+
+// //
+// // Event เมื่อมีการเปลี่ยน role ใน select
+// //
+// document.getElementById("role").addEventListener("change", filterUsersByRole);
+//
+// ฟังก์ชันค้นหา + กรอง role พร้อมกัน
+//
+function applyFilters() {
+  const roleSelect = document.getElementById("role_id").value;
+  const searchText = document.getElementById("first_name").value.toLowerCase().trim();
+
+  let list = Store.getUsers();
+
+  // ------------------ Filter Role ------------------
+  if (roleSelect === "admin") {
+    list = list.filter(u => u.access_id === 1);
+  } else if (roleSelect === "user") {
+    list = list.filter(u => u.access_id === 2);
+  }
+
+  // ------------------ Search Username ------------------
+  if (searchText !== "") {
+    list = list.filter(u => {
+      const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
+      const email = u.email.toLowerCase();
+
+      return (
+        fullName.includes(searchText) ||
+        email.includes(searchText)
+      );
+    });
+  }
+
+  // แสดงผลหลังจากกรองเสร็จ
+  renderUsers(list);
+}
+// เมื่อกดปุ่ม Search
+// document.getElementById("search-form").addEventListener("submit", function (e) {
+//   e.preventDefault();  // กันการ reload หน้า
+//   applyFilters();
+// });
+const searchForm = document.getElementById("search-form");
+if (searchForm) {
+  searchForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    applyFilters();
+  });
+}
+
+// document.getElementById("role").addEventListener("change", applyFilters);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("login-btn");
+  if (!loginBtn) {
+    console.error("loginBtn not found");
+    return;
+  }
+
+  loginBtn.addEventListener("click", async () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+      alert("กรุณากรอกอีเมลและรหัสผ่าน");
+      return;
+    }
+
+    try {
+      const res = await window.electronAPI.login(email, password);
+
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+
+      localStorage.setItem("loginUser", JSON.stringify(res.user));
+      switch (res.user.role_id) {
+        case 1: window.location.href = "doctor-main.html"; break;
+        case 2: window.location.href = "pharmacist-main.html"; break;
+        case 3: window.location.href = "เทคนิกการแพทย์/MedicalTechDoctor.html"; break;
+        case 4: window.location.href = "staff-main.html"; break;
+        default: alert("role_id ไม่ถูกต้อง"); break;
+      }
+    } catch (err) {
+      console.error("Login failed:", err);
+      alert("เกิดข้อผิดพลาดในการเข้าสู่ระบบ");
+    }
+  });
+});
+
+
+
+
 // โหลดข้อมูลผู้ใช้ตอนหน้าเว็บพร้อม
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🎉 DOM loaded — loading users...");
   loadUsers();
 });
-

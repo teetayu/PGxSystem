@@ -27,7 +27,7 @@
                 <li class="active"><a href="admin-log-usage.html">Log การเข้าใช้งาน</a></li>
                 <li class="active"><a href="admin-manage-role.html">การจัดการสิทธิ์</a></li>
 
-                <li class="logout"><a href="logout.html">ออกจากระบบ</a></li>
+                <li class="logout"><a href="login-main.html">ออกจากระบบ</a></li>
             </ul>
         </div>
 
@@ -37,15 +37,16 @@
             </div>
 
             <div class="content">
+                
                 <div class="content-box">
                     <div class="box-left">
-                        <form class="search-bar">
+                        <form class="search-bar" id="search-form">
+                            
+                            <label for="first_name">Username</label>
+                            <input type="text" id="first_name" placeholder="Value">
 
-                            <label for="username">Username</label>
-                            <input type="text" id="username" placeholder="Value">
-
-                            <label for="role">Role</label>
-                            <select id="role" name="role">
+                            <label for="role_id">Role</label>
+                            <select id="role_id" name="role">
                                 <option value="all">All</option>
                                 <option value="admin">Admin</option>
                                 <option value="user">User</option>
@@ -212,7 +213,22 @@
 
         </div>
     </div>
+    
+    <!-- <script>document.addEventListener("DOMContentLoaded", () => {
+            const user = JSON.parse(localStorage.getItem("loginUser"));
 
+            if (!user) {
+                alert("กรุณาเข้าสู่ระบบ");
+                window.location.href = "login-main.html";
+                return;
+            }
+
+            if (user.access_id !== 1) {
+                alert("คุณไม่มีสิทธิ์เข้าหน้านี้");
+                window.location.href = "login-main.html";
+                return;
+            }
+            });</script> -->
     <script src="js/admin-manage-user.js"></script>
 
 </body>
