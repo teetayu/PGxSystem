@@ -22,35 +22,66 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 // สร้างหน้าต่างหลัก
+
+let win; // ประกาศตัวแปรใน scope ระดับ global
+
 function createWindow() {
+  // ถ้ามีหน้าต่างอยู่แล้ว ไม่ต้องสร้างใหม่
   if (BrowserWindow.getAllWindows().length > 0) {
-    return
+    return;
   }
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1200,
     height: 800,
-    fullscreen: true,
-    autoHideMenuBar: true,
-    titleBarStyle: 'hidden',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
-      contextIsolation: true,
-    },
-  })
+      contextIsolation: true
+    }
+  });
 
-  win.loadFile(path.join(__dirname, 'view', 'admin-manage-user.html')).catch((err) => {
-    console.error('Failed to load admin-manage-user.html:', err)
-  })
-  //  win.loadFile(path.join(__dirname, 'view', 'login-main.html')).catch((err) => {
-  //   console.error('Failed to load login-main.html:', err)
-  // })
+  // โหลดไฟล์ HTML
+  win.loadFile(path.join(__dirname, 'view', 'login-main.html'))
+    .catch((err) => {
+      console.error('Failed to load admin-manage-user.html:', err);
+    });
 
+  win.webContents.openDevTools();
+
+  // CSP header configuration
+  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': ["default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co;"]
+      }
+    });
+  });
+
+  // เมื่อปิดหน้าต่าง ให้รีเซ็ตตัวแปร
   win.on('closed', () => {
-    // no-op placeholder to retain reference until closed
-  })
+    win = null;
+  });
 }
+
+// เรียกเมื่อแอปพร้อม
+app.whenReady().then(createWindow);
+
+// ปิดแอปเมื่อปิดทุกหน้าต่าง (ยกเว้น macOS)
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+// สำหรับ macOS: สร้างหน้าต่างใหม่เมื่อคลิกไอคอนแอป
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
 
 // Event: สร้างผู้ใช้ใหม่
 ipcMain.handle('create-user', async (event, userData) => {
@@ -222,28 +253,17 @@ ipcMain.handle('create-patient', async (event, patientData) => {
         return { success: false, message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' };
     }
 });
-  
-//error handling
-win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-        responseHeaders: {
-            ...details.responseHeaders,
-            'Content-Security-Policy': [
-                "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
-            ]
-        }
-    });
-});
+
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 
 
-app.whenReady().then(createWindow)
+// app.whenReady().then(createWindow)
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
+// app.on('window-all-closed', () => {
+//   if (process.platform !== 'darwin') app.quit()
+// })
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
-})
+// app.on('activate', () => {
+//   if (BrowserWindow.getAllWindows().length === 0) createWindow()
+// })

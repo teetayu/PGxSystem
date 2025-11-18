@@ -301,7 +301,9 @@ document.addEventListener("DOMContentLoaded", () => {
 //login section end
 
 //new patient section start
-document.getElementById('patientForm').addEventListener('submit', async (e) => {
+const patientFormEl = document.getElementById('patientForm');
+if (patientFormEl) {
+  patientFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const data = {
@@ -331,7 +333,8 @@ document.getElementById('patientForm').addEventListener('submit', async (e) => {
         console.error('Error saving patient:', err);
         alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
-});
+  });
+}
 
 
 
