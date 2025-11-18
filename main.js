@@ -209,32 +209,18 @@ ipcMain.handle('delete-user', async (event, userId) => {
 //new patient section start
 ipcMain.handle('create-patient', async (event, patientData) => {
     try {
-        // หา physician_id จากชื่อ
-        const { data: physicianData } = await supabase
-            .from('physicians')
-            .select('physician_id')
-            .ilike('name', patientData.physician)
-            .single();
-
-        // หา hospital_id จากชื่อ
-        const { data: hospitalData } = await supabase
-            .from('hospitals')
-            .select('hospital_id')
-            .ilike('name', patientData.hospital)
-            .single();
-
         const { data, error } = await supabase
             .from('patients')
             .insert([{
-                hospital_number: patientData.id_number, // หรือใช้ HN ที่ generate
+                hospital_number: patientData.id_number,
                 fname: patientData.fname,
                 lname: patientData.lname,
                 age: patientData.age,
                 gender: patientData.gender,
                 id_number: patientData.id_number,
                 phone_number: patientData.phone_number,
-                physician_id: physicianData?.physician_id || null,
-                hospital_id: hospitalData?.hospital_id || null,
+                physician_id: parseInt(patientData.physician) || null,
+                hospital_id: parseInt(patientData.hospital) || null,
                 request_date: patientData.request_date,
                 report_date: patientData.report_date,
                 weight: patientData.weight,
@@ -252,6 +238,36 @@ ipcMain.handle('create-patient', async (event, patientData) => {
         console.error('Create patient error:', err);
         return { success: false, message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' };
     }
+});
+
+// Event: ดึงรายชื่อแพทย์
+ipcMain.handle('get-physicians', async () => {
+  const { data, error } = await supabase
+    .from('physicians')
+    .select('physician_id,physician_name')
+    .order('physician_name', { ascending: true });
+
+  if (error) {
+    console.error('Supabase get-physicians Error:', error);
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
+});
+
+// Event: ดึงรายชื่อโรงพยาบาล
+ipcMain.handle('get-hospitals', async () => {
+  const { data, error } = await supabase
+    .from('hospitals')
+    .select('hospital_id, hospital_name')
+    .order('hospital_name', { ascending: true });
+
+  if (error) {
+    console.error('Supabase get-hospitals Error:', error);
+    throw new Error(error.message);
+  }
+
+  return data ?? [];
 });
 
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');

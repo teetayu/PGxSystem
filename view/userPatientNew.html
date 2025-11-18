@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGx System</title>
     <link rel="stylesheet" href="css/userPatientNew.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
@@ -22,7 +21,7 @@
                 <h1>กรอกข้อมูลผู้ป่วยใหม่</h1>
                 <div class="boxRight">
                     <div class="divider"></div>
-                    <img src="/view/img/User.png" alt="user" class="user-img" onclick="">
+                    <img src="../view/img/User.png" alt="user" class="user-img" onclick="">
                     <button class="newPatients">ชื่อผู้ใช้งาน</button>
                 </div>
             </header>
@@ -96,12 +95,16 @@
                                 <div class="form3">
                                     <div class="form-field">
                                         <div class="form-label">แพทย์ (Physician) :</div>
-                                        <input class="input2" type="text" name="physician" />
+                                        <select class="input2" name="physician" id="physician-select" required>
+                                            <option value="" disabled selected hidden>เลือกแพทย์</option>
+                                        </select>
                                     </div>
 
                                     <div class="form-field">
                                         <div class="form-label">หน่วยงานที่ส่งตรวจ (Hospital) :</div>
-                                        <input class="input2" type="text" name="hospital" />
+                                        <select class="input2" name="hospital" id="hospital-select" required>
+                                            <option value="" disabled selected hidden>เลือกโรงพยาบาล</option>
+                                        </select>
                                     </div>
 
                                     <!-- HN (ให้ backend กำหนด) -->
@@ -143,15 +146,15 @@
                                     <input class="input5" type="text" name="text"
                                         placeholder="ระบุหมายเหตุเพิ่มเติมเกี่ยวกับประวัติการรักษา" />
                                 </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-secondary">บันทึกข้อมูล</button>
+                                    <button type="button" class="btn-primary">บันทึกข้อมูลและเพิ่มใบสั่งตรวจ</button>
+                                </div>
                             </form>
                         </div>
 
                     </section>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn-secondary">บันทึกข้อมูล</button>
-                        <button type="button" class="btn-primary">บันทึกข้อมูลและเพิ่มใบสั่งตรวจ</button>
-                    </div>
                 </div>
             </div>
         </main>
@@ -159,6 +162,8 @@
     </div>
 
     <script src="js/sidebarUser.js"></script>
+    <script src="js/userPatientNew.js"></script>
+    <script src="../renderer.js"></script>
 
 </body>
 

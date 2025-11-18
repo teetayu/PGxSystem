@@ -267,25 +267,28 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
       }
 
+      // บันทึกข้อมูล user ลง sessionStorage
+      sessionStorage.setItem('currentUser', JSON.stringify(res.user));
+
       // ✅ ถ้าเป็น admin ให้ไปหน้า admin-manage-user.html
       if (res.isAdmin) {
-          window.location.href = "C:\\GitHub Desktop\\PGxSystem\\view\\admin-manage-user.html";
+          window.location.href = "adminManageUser.html";
           return;
       }
 
       // ถ้าไม่ใช่ admin ใช้ role_id ตัดสินใจ
       switch (res.user.role_id) {
           case 1:
-              window.location.href = "doctor-main.html";
+              window.location.href = "doctorReport.html";
               break;
           case 2:
-              window.location.href = "pharmacist-main.html";
+              window.location.href = "pharmacyReport.html";
               break;
           case 3:
-              window.location.href = "C:\\GitHub Desktop\\PGxSystem\\เทคนิกการแพทย์\\MedicalTechDoctor.html";
+              window.location.href = "MedicalTechSend.html";
               break;
           case 4:
-              window.location.href = "C:\\GitHub Desktop\\PGxSystem\\User page\\Userpage_patientnew.html";
+              window.location.href = "userPatientNew.html";
               break;
           default:
               alert("role_id ไม่ถูกต้อง");
@@ -301,9 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //login section end
 
 //new patient section start
-const patientFormEl = document.getElementById('patientForm');
-if (patientFormEl) {
-  patientFormEl.addEventListener('submit', async (e) => {
+document.getElementById('patientForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const data = {
@@ -313,8 +314,8 @@ if (patientFormEl) {
         gender: document.querySelector('[name="gender"]:checked')?.value,
         id_number: document.querySelector('[name="Idnumber"]').value,
         phone_number: document.querySelector('[name="phone"]').value,
-        physician: document.querySelector('[name="physician"]').value,
-        hospital: document.querySelector('[name="hospital"]').value,
+        physician: document.querySelector('[name="physician"]').value, // ตอนนี้เป็น physician_id แล้ว
+        hospital: document.querySelector('[name="hospital"]').value,   // ตอนนี้เป็น hospital_id แล้ว
         request_date: document.querySelector('[name="requestDate"]').value,
         report_date: document.querySelector('[name="reportedDate"]').value,
         weight: parseFloat(document.querySelector('[name="weightKg"]').value),
@@ -333,9 +334,37 @@ if (patientFormEl) {
         console.error('Error saving patient:', err);
         alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
-  });
-}
+});
+//ดึงข้อมูลแพทย์
+document.addEventListener('DOMContentLoaded', async () => {
+  // โหลดรายชื่อแพทย์
+  try {
+    const physicians = await window.electronAPI.getPhysicians();
+    const physicianSelect = document.getElementById('physician-select');
+    physicians.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.physician_id;
+      opt.textContent = p.name;
+      physicianSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error('Error loading physicians:', err);
+  }
 
+  // โหลดรายชื่อโรงพยาบาล
+  try {
+    const hospitals = await window.electronAPI.getHospitals();
+    const hospitalSelect = document.getElementById('hospital-select');
+    hospitals.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h.hospital_id;
+      opt.textContent = h.name;
+      hospitalSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error('Error loading hospitals:', err);
+  }
+});
 
 
 // โหลดข้อมูลผู้ใช้ตอนหน้าเว็บพร้อม
