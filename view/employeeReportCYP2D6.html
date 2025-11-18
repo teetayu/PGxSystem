@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายละเอียดผลตรวจ</title>
-    <link rel="stylesheet" href="css/userPatientCYP2D6.css">
+    <link rel="stylesheet" href="css/employeeReportCYP2D6.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="userPatientCYP2D6Page">
+    <div class="employeeReportCYP2D6Page">
 
-        <div class="sidebarUser" id="sidebarUser"></div>
+        <div class="sidebarEmployee" id="sidebarEmployee"></div>
 
         <main class="main-content patient2-content">
 
@@ -25,7 +25,7 @@
                     <div class="patient2-header-separator"></div>
 
                     <div class="patient2-header-profile">
-                        <img src="img/Icon (1).png" class="patient2-header-avatar">
+                        <img src="img/User.png" class="patient2-header-avatar">
                         <button class="patient2-header-chip">ชื่อผู้ใช้งาน</button>
                     </div>
                 </div>
@@ -33,16 +33,24 @@
 
             <section class="result-card">
 
-                <!-- หัวการ์ด: ไอคอน + ชื่อ + ปุ่มพิมพ์ -->
                 <header class="result-card-head">
                     <div class="result-card-title">
                         <div class="result-card-icon-container">
-                            <img type="button" onclick="location.href='/view/userPatientC.html'" src="img/Icon.png" class="result-card-icon-img">
+                            <img type="button" onclick="location.href='/view/employeeReport.html'" src="img/Icon.png" class="result-card-icon-img">
                         </div>
                         <h2>รายละเอียดผลตรวจ</h2>
                     </div>
 
-                    <button class="print-button">พิมพ์ใบผลการตรวจ</button>
+                    <div class="verify-status">
+                        <div class="verify-item">
+                            <span class="verify-text">ผลการยืนยันจากเทคนิคการแพทย์ :</span>
+                            <span class="verify-dot"></span>
+                        </div>
+                        <div class="verify-item">
+                            <span class="verify-text">ผลการยืนยันจากเภสัชกร :</span>
+                            <span class="verify-dot"></span>
+                        </div>
+                    </div>
                 </header>
 
                 <div class="result-card-body">
@@ -71,7 +79,7 @@
 
                         <tr>
                             <th>ชื่อการตรวจ :</th>
-                            <td><input class="field" value="PGx for Acetaminophen (CYP2D6)"></td>
+                            <td><input class="field"></td>
 
                             <th>ยาที่ผู้ป่วยได้รับในปัจจุบัน :</th>
                             <td><input class="field"></td>
@@ -86,6 +94,7 @@
                                 <span class="geno-label">ยีนที่ตรวจ :</span>
                                 <span class="geno-text">CYP2D6</span>
                             </div>
+                            <div class="geno-divider"></div>
                             <div class="geno-right"></div>
                         </div>
 
@@ -94,7 +103,10 @@
                                 <span class="geno-label">Genotype :</span>
                                 <span class="geno-text">CYP2C9*2 (430C&gt;T)</span>
                             </div>
-                            <div class="geno-right"></div>
+                            <div class="geno-divider"></div>
+                            <div class="geno-right">
+                                <input type="text" class="geno-input">
+                            </div>
                         </div>
 
                         <div class="geno-row">
@@ -102,16 +114,18 @@
                                 <span class="geno-label"></span>
                                 <span class="geno-text geno-indent">CYP2C9*3 (1075A&gt;C)</span>
                             </div>
-                            <div class="geno-right"></div>
+                            <div class="geno-divider"></div>
+                            <div class="geno-right">
+                                <input type="text" class="geno-input">
+                            </div>
                         </div>
 
-                        <!-- ถ้าต้องการแถว Predicted แบบในภาพ
-                             ให้ใส่กลับมาด้านล่างนี้ -->
                         <div class="geno-row">
                             <div class="geno-left">
                                 <span class="geno-label">Predicted Genotype :</span>
                                 <span class="geno-text"></span>
                             </div>
+                            <div class="geno-divider"></div>
                             <div class="geno-right"></div>
                         </div>
 
@@ -120,6 +134,7 @@
                                 <span class="geno-label">Predicted Phenotype :</span>
                                 <span class="geno-text"></span>
                             </div>
+                            <div class="geno-divider"></div>
                             <div class="geno-right"></div>
                         </div>
 
@@ -128,18 +143,24 @@
                                 <span class="geno-label">Therapeutic recommendation :</span>
                                 <span class="geno-text"></span>
                             </div>
+                            <div class="geno-divider"></div>
                             <div class="geno-right"></div>
                         </div>
 
                     </div>
                     <!-- ================================================ -->
 
+                    <div class="result-card-footer">
+                        <button class="print-button">พิมพ์ใบผลการตรวจ</button>
+                    </div>
+
                 </div>
             </section>
         </main>
     </div>
 
-    <script src="js/sidebarUser.js"></script>
+    <script src="js/sidebarEmployee.js"></script>
+
 </body>
 
 </html>
