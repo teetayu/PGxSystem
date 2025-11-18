@@ -270,6 +270,65 @@ ipcMain.handle('get-hospitals', async () => {
   return data ?? [];
 });
 
+// Event: ดึงสถิติ dashboard
+ipcMain.handle('get-dashboard-stats', async () => {
+  try {
+    const { count: totalPatients, error: patientsError } = await supabase
+      .from('patients')
+      .select('*', { count: 'exact', head: true });
+
+    if (patientsError) throw patientsError;
+
+    return {
+      success: true,
+      stats: {
+        totalPatients: totalPatients || 0,
+        // เพิ่ม stats อื่น ๆ ได้ที่นี่
+      }
+    };
+  } catch (err) {
+    console.error('Get dashboard stats error:', err);
+    return { success: false, message: err.message };
+  }
+});
+
+// Event: ดึงสถิติผู้ป่วยรายเดือน
+ipcMain.handle('get-monthly-patients', async () => {
+  try {
+    const { data, error } = await supabase
+      .from('patients')
+      .select('request_date');
+
+    if (error) throw error;
+
+    // นับจำนวนผู้ป่วยแยกตามเดือน
+    const monthlyCounts = {};
+    data.forEach(patient => {
+      if (patient.request_date) {
+        const date = new Date(patient.request_date);
+        const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+        monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
+      }
+    });
+
+    // แปลงเป็น array และเรียงตามวันที่
+    const sortedData = Object.entries(monthlyCounts)
+      .map(([monthYear, count]) => {
+        const [month, year] = monthYear.split('/');
+        return { month: parseInt(month), year: parseInt(year), count };
+      })
+      .sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return a.month - b.month;
+      });
+
+    return sortedData;
+  } catch (err) {
+    console.error('Get monthly patients error:', err);
+    throw err;
+  }
+});
+
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 

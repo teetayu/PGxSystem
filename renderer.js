@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
               window.location.href = "MedicalTechSend.html";
               break;
           case 4:
-              window.location.href = "userPatientNew.html";
+              window.location.href = "userDashboard.html";
               break;
           default:
               alert("role_id ไม่ถูกต้อง");
