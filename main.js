@@ -42,12 +42,12 @@ function createWindow() {
   });
 
   // โหลดไฟล์ HTML
-  win.loadFile(path.join(__dirname, 'view', 'login-main.html'))
+  win.loadFile(path.join(__dirname, 'view', 'loginMain.html'))
     .catch((err) => {
       console.error('Failed to load admin-manage-user.html:', err);
     });
 
-  win.webContents.openDevTools();
+  
 
   // CSP header configuration
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
