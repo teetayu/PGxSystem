@@ -174,3 +174,23 @@ confirmBtn.addEventListener('click', async function (event) {
     }
 });
 
+document.getElementById('search-form').addEventListener('submit', (e) => {
+  e.preventDefault(); // ป้องกัน reload หน้า
+  
+  const username = document.getElementById('username').value.toLowerCase();
+  const role = document.getElementById('role').value;
+  
+  const allUsers = Store.users; // ดึงจาก Store
+  
+  let filtered = allUsers.filter(u => {
+    const nameMatch = username === '' || 
+                      `${u.first_name} ${u.last_name}`.toLowerCase().includes(username);
+    const roleMatch = role === 'all' || 
+                      (role === 'admin' && u.access_id === 1) || 
+                      (role === 'user' && u.access_id === 2);
+    return nameMatch && roleMatch;
+  });
+  
+  renderUsers(filtered);
+});
+

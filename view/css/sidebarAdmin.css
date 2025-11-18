@@ -38,7 +38,7 @@
     width: 100%;
 }
 
-.sidebarUser ul li.active a {
+.sidebarAdmin ul li.active a {
     font-size: 20px;
     font-weight: bold;
     text-decoration: none;
@@ -47,7 +47,7 @@
     padding: 20px 40px;
 }
 
-.sidebarUser ul li.logout a {
+.sidebarAdmin ul li.logout a {
     font-size: 20px;
     font-weight: bold;
     text-decoration: none;

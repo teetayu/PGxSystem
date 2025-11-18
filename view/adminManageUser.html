@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage User</title>
-    <link rel="stylesheet" href="css/adminManageUser.css">
-
+    <link rel="stylesheet" href="./css/adminManageUser.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 
@@ -24,7 +23,7 @@
             <div class="content">
                 <div class="content-box">
                     <div class="box-left">
-                        <form class="search-bar">
+                        <form class="search-bar" id="search-form">
 
                             <label for="username">Username</label>
                             <input type="text" id="username" placeholder="Value">
@@ -61,43 +60,19 @@
 
                         <tbody>
                             <tr>
-                                <td class="font-weight-bold">นายเทส ทดสอบ</td>
-                                <td>login@gmail.com</td>
-                                <td>Lab Manager</td>
-                                <td><span class="badge badge-admin">Admin</span></td>
-                                <td>21/10/68</td>
+                                 <tr>
+                                <tbody id="user-table-body"></tbody>
+                                <script src="../renderer.js"></script>
+                                
+<!--                                 
                                 <td>
                                     <div class="action-buttons">
                                         <button class="btn btn-edit">แก้ไข</button>
                                         <button class="btn btn-delete">ลบ</button>
                                     </div>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">นายเทส ทดสอบ</td>
-                                <td>login@gmail.com</td>
-                                <td>Staff</td>
-                                <td><span class="badge badge-user">User</span></td>
-                                <td>21/10/68</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-edit">แก้ไข</button>
-                                        <button class="btn btn-delete">ลบ</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">นายเทส ทดสอบ</td>
-                                <td>login@gmail.com</td>
-                                <td>Doctor</td>
-                                <td><span class="badge badge-user">User</span></td>
-                                <td>21/10/68</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-edit">แก้ไข</button>
-                                        <button class="btn btn-delete">ลบ</button>
-                                    </div>
-                                </td>
+                                </td> -->
+                                 
                             </tr>
                         </tbody>
                     </table>
