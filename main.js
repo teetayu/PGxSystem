@@ -56,9 +56,10 @@ function createWindow() {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self'; " +
-          "script-src 'self'; " +
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-          "font-src 'self' https://fonts.gstatic.com; " +
+          "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
+          "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
+          "img-src 'self' data:; " +
           "connect-src 'self' https://*.supabase.co;"
         ]
       }
@@ -93,15 +94,19 @@ app.on('activate', () => {
 ipcMain.handle('create-user', async (event, userData) => {
   const { firstname, lastname, email, password, job_role, access_level } = userData
 
+  console.log('📥 Received userData:', userData);
+  console.log('📝 job_role:', job_role, 'type:', typeof job_role);
+  console.log('📝 access_level:', access_level, 'type:', typeof access_level);
+
   // เข้ารหัสรหัสผ่าน
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  // Mapping role & access
-  const roleMap = { แพทย์: 1, เภสัช: 2, นักเทคนิคการแพทย์: 3, พนักงาน: 4 }
-  const accessMap = { admin: 1, user: 2 }
+  // Frontend ส่งตัวเลขมาแล้ว ไม่ต้องแปลง
+  const selectedRoleId = job_role;
+  const selectedAccessId = access_level;
 
-  const selectedRoleId = roleMap[job_role]
-  const selectedAccessId = accessMap[access_level]
+  console.log('✅ Using role_id:', selectedRoleId);
+  console.log('✅ Using access_id:', selectedAccessId);
 
   // บันทึกลง Supabase
   const { data, error } = await supabase
@@ -298,42 +303,59 @@ ipcMain.handle('get-dashboard-stats', async () => {
   }
 });
 
-// Event: ดึงสถิติผู้ป่วยรายเดือน
-ipcMain.handle('get-monthly-patients', async () => {
-  try {
-    const { data, error } = await supabase
-      .from('patients')
-      .select('request_date');
+// // Event: ดึงสถิติผู้ป่วยรายเดือน
+// ipcMain.handle('get-monthly-patients', async () => {
+//   try {
+//     console.log('📊 Fetching monthly patient stats...');
+    
+//     const { data, error } = await supabase
+//       .from('patients')
+//       .select('request_date');
 
-    if (error) throw error;
+//     if (error) {
+//       console.error('❌ Supabase error:', error);
+//       throw error;
+//     }
 
-    // นับจำนวนผู้ป่วยแยกตามเดือน
-    const monthlyCounts = {};
-    data.forEach(patient => {
-      if (patient.request_date) {
-        const date = new Date(patient.request_date);
-        const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
-        monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
-      }
-    });
+//     if (!data || data.length === 0) {
+//       console.log('⚠️ No patient data found');
+//       return [];
+//     }
 
-    // แปลงเป็น array และเรียงตามวันที่
-    const sortedData = Object.entries(monthlyCounts)
-      .map(([monthYear, count]) => {
-        const [month, year] = monthYear.split('/');
-        return { month: parseInt(month), year: parseInt(year), count };
-      })
-      .sort((a, b) => {
-        if (a.year !== b.year) return a.year - b.year;
-        return a.month - b.month;
-      });
+//     // นับจำนวนผู้ป่วยแยกตามเดือน
+//     const monthlyCounts = {};
+//     data.forEach(patient => {
+//       if (patient.request_date) {
+//         try {
+//           const date = new Date(patient.request_date);
+//           if (!isNaN(date.getTime())) { // ตรวจสอบว่าเป็นวันที่ที่ถูกต้อง
+//             const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+//             monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
+//           }
+//         } catch (parseError) {
+//           console.error('❌ Invalid date:', patient.request_date);
+//         }
+//       }
+//     });
 
-    return sortedData;
-  } catch (err) {
-    console.error('Get monthly patients error:', err);
-    throw err;
-  }
-});
+//     // แปลงเป็น array และเรียงตามวันที่
+//     const sortedData = Object.entries(monthlyCounts)
+//       .map(([monthYear, count]) => {
+//         const [month, year] = monthYear.split('/');
+//         return { month: parseInt(month), year: parseInt(year), count };
+//       })
+//       .sort((a, b) => {
+//         if (a.year !== b.year) return a.year - b.year;
+//         return a.month - b.month;
+//       });
+
+//     console.log('✅ Monthly data:', sortedData.length, 'months');
+//     return sortedData;
+//   } catch (err) {
+//     console.error('❌ Get monthly patients error:', err);
+//     return []; // ส่ง array ว่างแทนการ throw error
+//   }
+// });
 
 // Handler: ดึงรายงานผู้ป่วย
 ipcMain.handle('get-patient-reports', async () => {
@@ -399,18 +421,78 @@ ipcMain.handle('get-patient-reports', async () => {
   }
 });
 
+// Handler: ดึงรายการใบสั่งตรวจ
+ipcMain.handle('get-orders', async () => {
+  try {
+    console.log('🔄 Fetching orders...');
+    
+    // ดึงข้อมูล orders ทั้งหมดก่อน
+    const { data: ordersData, error: ordersError } = await supabase
+      .from('orders')
+      .select('*')
+      .order('order_id', { ascending: true });
 
+    if (ordersError) throw ordersError;
+    
+    console.log('📋 Orders columns:', ordersData[0] ? Object.keys(ordersData[0]) : 'No data');
+
+    // ดึงข้อมูล patients พร้อมชื่อ-นามสกุล
+    const { data: patientsData, error: patientsError } = await supabase
+      .from('patients')
+      .select('users_id, hospital_number, fname, lname');
+
+    if (patientsError) throw patientsError;
+    
+    console.log('👤 Patients sample:', patientsData[0]);
+
+    // ดึงข้อมูล physicians ทั้งหมด
+    const { data: physiciansData, error: physiciansError } = await supabase
+      .from('physicians')
+      .select('*');
+
+    if (physiciansError) throw physiciansError;
+    
+    console.log('👨‍⚕️ Physicians columns:', physiciansData[0] ? Object.keys(physiciansData[0]) : 'No data');
+
+    // JOIN ข้อมูล
+    const orders = ordersData.map((order, index) => {
+      const patient = patientsData.find(p => p.users_id === order.users_id);
+      
+      // ลองหาว่า physician เชื่อมด้วย column อะไร
+      const physician = physiciansData[0]; // ใช้แพทย์คนแรกชั่วคราว
+
+      return {
+        no: index + 1,
+        orderId: order.order_id,
+        hospitalNumber: patient?.hospital_number || 'N/A',
+        patientName: patient ? `${patient.fname} ${patient.lname}` : 'ไม่ระบุ',
+        inspectionCode: order.inspection_code || 'N/A',
+        physicianName: physician?.physician_name || 'ไม่ระบุ',
+        orderDate: order.order_date ? new Date(order.order_date).toLocaleDateString('th-TH') : 'N/A',
+        _debugOrder: order,  // ดูข้อมูลเต็มของ order
+        _debugPhysician: physician  // ดูข้อมูลเต็มของ physician
+      };
+    });
+
+    console.log('✅ Orders loaded:', orders.length, 'records');
+    return orders;
+
+  } catch (err) {
+    console.error('❌ Get orders error:', err);
+    throw err;
+  }
+});
 
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 
 
-// app.whenReady().then(createWindow)
+app.whenReady().then(createWindow)
 
-// app.on('window-all-closed', () => {
-//   if (process.platform !== 'darwin') app.quit()
-// })
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
 
-// app.on('activate', () => {
-//   if (BrowserWindow.getAllWindows().length === 0) createWindow()
-// })
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+})

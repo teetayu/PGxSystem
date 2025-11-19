@@ -38,13 +38,25 @@ const ORDERS = [
     }
 ];
 
-// โหลดชื่อผู้ใช้จาก sessionStorage
-document.addEventListener('DOMContentLoaded', () => {
+// โหลดชื่อผู้ใช้และข้อมูลใบสั่งตรวจจาก database
+document.addEventListener('DOMContentLoaded', async () => {
+    // แสดงชื่อผู้ใช้
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
     const userNameBtn = document.querySelector('.newPatients');
     
     if (userNameBtn && currentUser.first_name) {
         userNameBtn.textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+    }
+
+    // โหลดข้อมูลใบสั่งตรวจ
+    try {
+        console.log('🔄 Loading orders...');
+        const orders = await window.electronAPI.getOrders();
+        console.log('📊 Orders data:', orders);
+        renderOrdersTable(orders);
+    } catch (err) {
+        console.error('❌ Error loading orders:', err);
+        renderOrdersTable([]);
     }
 });
 
@@ -74,115 +86,125 @@ const btnReject = document.getElementById('btnReject');
 const btnPrint = document.getElementById('btnPrint');
 
 // ===== state =====
-let filtered = [...ORDERS];
+let ordersData = [];
 let selectedIndex = -1;
 
-// ===== renderers =====
-function renderTable(list) {
+// ===== ฟังก์ชันแสดงตาราง =====
+function renderOrdersTable(orders) {
+    ordersData = orders;
+    const tbody = document.getElementById('orderTbody');
     tbody.innerHTML = '';
-    list.forEach((o, idx) => {
+
+    if (!orders || orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">ไม่มีข้อมูล</td></tr>';
+        return;
+    }
+
+    orders.forEach((order, idx) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-      <td>${o.orderNo}</td>
-      <td>${o.hn}</td>
-      <td>${o.testCode}</td>
-      <td>${o.doctor}</td>
-      <td>${o.date}</td>
-    `;
-        tr.addEventListener('click', () => onSelect(idx));
-        if (idx === selectedIndex) tr.classList.add('selected');
+            <td>${order.orderId}</td>
+            <td>${order.hospitalNumber}</td>
+            <td>${order.inspectionCode}</td>
+            <td>${order.physicianName}</td>
+            <td>${order.orderDate}</td>
+        `;
+        
+        // เมื่อคลิกแถว
+        tr.addEventListener('click', () => {
+            document.querySelectorAll('#orderTbody tr').forEach(r => r.classList.remove('active-row'));
+            tr.classList.add('active-row');
+            selectedIndex = idx;
+            showOrderDetail(order);
+        });
+
         tbody.appendChild(tr);
     });
 }
 
-function fillForm(o) {
-    fields.orderId.value = o.orderId || '';
-    fields.orderName.value = o.orderName || '';
-    fields.specimenType.value = o.specimenType || '';
-    fields.minVolume.value = o.minVolume || '';
-    fields.container.value = o.container || '';
-    fields.transportTemp.value = o.transportTemp || '';
-    fields.reason.value = o.reason || '';
-    fields.regimen.value = o.regimen || '';
-    fields.currentMeds.value = o.currentMeds || '';
-}
-
-// ===== interactions =====
-let selectedOrder = null;
-
-function onSelect(idx) {
-    selectedIndex = idx;
-    selectedOrder = filtered[idx];   // เก็บรายการที่เลือก
-
-    // ไฮไลต์แถว
-    [...tbody.children].forEach((tr, i) => {
-        tr.classList.toggle('selected', i === idx);
-    });
-
-    // เติมฟอร์ม + แสดงแผงรายละเอียด
-    fillForm(selectedOrder);
-    panelDetail.classList.add('active');
-}
-
-function clearForm() {
-    Object.values(fields).forEach(el => el.value = '');
-    selectedOrder = null;            // เคลียร์สถานะที่เลือก
-    panelDetail.classList.remove('active');
-}
-
-function doSearch() {
-    const q = (searchInput.value || '').trim().toLowerCase();
-    filtered = !q
-        ? [...ORDERS]
-        : ORDERS.filter(o =>
-            [o.orderNo, o.hn, o.testCode, o.doctor, o.orderName]
-                .some(v => (v || '').toLowerCase().includes(q))
-        );
-
-    selectedIndex = -1;
-    clearForm();
-    renderTable(filtered);
-}
-
-// ปุ่ม toolbar
-searchBtn.addEventListener('click', doSearch);
-searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
-
-// ===== init =====
-renderTable(filtered);
-
-// ===== อ้างอิง panel-detail เพื่อสลับสถานะปุ่ม =====
-const panelDetail = document.querySelector('.panel-detail');
-panelDetail.classList.remove('active');   // ให้แน่ใจว่าเริ่มต้นไม่มี .active
-
-// ===== ปุ่ม "พิมพ์บาร์โค้ด" =====
-btnPrint.addEventListener('click', () => {
-    if (selectedOrder) {
-        // ส่งข้อมูลไปยังหน้า BarcodePatient.html
-        sessionStorage.setItem('selectedOrder', JSON.stringify(selectedOrder));
-    } else {
-        sessionStorage.removeItem('selectedOrder');
+// ===== แสดงรายละเอียด =====
+function showOrderDetail(order) {
+    // เติมข้อมูลลงฟอร์ม
+    document.getElementById('orderId').value = order.orderId || '';
+    document.getElementById('orderName').value = 'Genomic DNA Extraction'; // ค่าเริ่มต้น
+    document.getElementById('specimenType').value = 'Blood/EDTA';
+    document.getElementById('minVolume').value = '3–6 mL';
+    document.getElementById('container').value = '';
+    document.getElementById('transportTemp').value = '20–25 องศา';
+    document.getElementById('reason').value = '';
+    document.getElementById('regimen').value = '';
+    document.getElementById('currentMeds').value = '';
+    
+    // แสดงปุ่มโดยเพิ่ม class active
+    const panelDetail = document.querySelector('.panel-detail');
+    if (panelDetail) {
+        panelDetail.classList.add('active');
     }
+}
+
+// ===== ฟังก์ชันค้นหา =====
+document.querySelector('.search-button')?.addEventListener('click', () => {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = ordersData.filter(order => 
+        order.hospitalNumber.toLowerCase().includes(searchTerm) ||
+        order.physicianName.toLowerCase().includes(searchTerm) ||
+        order.inspectionCode.toLowerCase().includes(searchTerm)
+    );
+    renderOrdersTable(filtered);
+    
+    // ซ่อนปุ่มเมื่อค้นหาใหม่
+    selectedIndex = -1;
+    const panelDetail = document.querySelector('.panel-detail');
+    if (panelDetail) {
+        panelDetail.classList.remove('active');
+    }
+});
+
+// ===== ปุ่มต่างๆ =====
+document.getElementById('btnAccept')?.addEventListener('click', () => {
+    if (selectedIndex === -1) {
+        alert('กรุณาเลือกใบสั่งตรวจก่อน');
+        return;
+    }
+    alert('ยืนยันสิ่งส่งตรวจสำเร็จ');
+});
+
+document.getElementById('btnReject')?.addEventListener('click', () => {
+    if (selectedIndex === -1) {
+        alert('กรุณาเลือกใบสั่งตรวจก่อน');
+        return;
+    }
+    alert('ปฏิเสธสิ่งส่งตรวจ');
+});
+
+document.getElementById('btnPrint')?.addEventListener('click', () => {
+    if (selectedIndex === -1) {
+        alert('กรุณาเลือกใบสั่งตรวจก่อน');
+        return;
+    }
+    // ส่งข้อมูลไปยังหน้า BarcodePatient.html
+    const selectedOrder = ordersData[selectedIndex];
+    sessionStorage.setItem('selectedOrder', JSON.stringify(selectedOrder));
     window.location.href = 'medicaltechSendBarcode.html';
 });
 
-btnViewOrder.addEventListener('click', () => {
-    // ✅ ไม่เช็ก selectedOrder แล้ว ไปหน้าต่อได้เลย
-    const o = selectedOrder || {};
 
-    // สร้างพารามิเตอร์ส่งไปหน้า Pre-Doctor.html
+document.getElementById('btnViewOrder')?.addEventListener('click', () => {
+    if (selectedIndex === -1) {
+        alert('กรุณาเลือกใบสั่งตรวจก่อน');
+        return;
+    }
+    
+    const selectedOrder = ordersData[selectedIndex];
     const params = new URLSearchParams({
-        orderId: (fields.orderId.value || o.orderId || '').trim(),
-        orderName: (fields.orderName.value || o.orderName || '').trim(),
-        patientName: o.patientName || '',
-        hn: o.hn || '',
-        doctor: o.doctor || '',
-        specimenType: (fields.specimenType.value || o.specimenType || '').trim(),
-        container: (fields.container.value || o.container || '').trim(),
-        collectedAt: '29/10/2023 10:30',
-        collector: 'คุณสมชาย ทดสอบ'
+        orderId: selectedOrder.orderId || '',
+        orderName: 'Genomic DNA Extraction',
+        patientName: selectedOrder.patientName || 'ไม่ระบุ',
+        hn: selectedOrder.hospitalNumber || '',
+        doctor: selectedOrder.physicianName || '',
+        collectedAt: new Date().toLocaleString('th-TH'),
+        collector: 'เจ้าหน้าที่'
     });
 
-    // ✅ ไปหน้า Pre-Doctor.html พร้อมส่งพารามิเตอร์
     window.location.href = `medicaltechSendDoctor.html?${params.toString()}`;
 });

@@ -105,11 +105,16 @@ confirmBtn.addEventListener('click', async function (event) {
     const jobRole = modalJobRole.value;
     const accessLevel = modalAccessLevel.value;
 
-    const roleMap = { แพทย์: 1, เภสัช: 2, นักเทคนิคการแพทย์: 3, พนักงาน: 4 };
-    const accessMap = { admin: 1, user: 2 };
+    const roleMap = { 
+        'doctor': 1,           // แพทย์
+        'pharmacist': 2,       // เภสัช
+        'medical-staff': 3,    // นักเทคนิคการแพทย์
+        'staff': 4             // พนักงาน
+    };
+    const accessMap = { 'admin': 1, 'user': 2 };
 
-    const selectedRole = roleMap[jobRole] ?? 4;       // default = พนักงาน
-    const selectedAccess = accessMap[accessLevel.toLowerCase()] ?? 2; // default = User
+    // const selectedRole = roleMap[jobRole] ?? 4;       // default = พนักงาน
+    // const selectedAccess = accessMap[accessLevel.toLowerCase()] ?? 2; // default = User
     // Validate inputs
     if (!firstname || !lastname || !email || !jobRole || !accessLevel) {
         alert("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -126,8 +131,8 @@ confirmBtn.addEventListener('click', async function (event) {
         first_name: firstname,
         last_name: lastname,
         email: email,
-        role_id: Number(selectedRole),
-        access_id: Number(selectedAccess)
+        role_id: roleMap[jobRole],
+        access_id: accessMap[accessLevel],
     };
 
     const response = await window.electronAPI.updateUser(updatedUser);
@@ -161,8 +166,8 @@ confirmBtn.addEventListener('click', async function (event) {
         lastname,
         email,
         password,
-        job_role: jobRole,
-        access_level: accessLevel
+        job_role: roleMap[jobRole],
+        access_level: accessMap[accessLevel.toLowerCase()]
     });
 
     if (response.success) {

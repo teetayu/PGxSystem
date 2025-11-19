@@ -304,7 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
 //login section end
 
 //new patient section start
-document.getElementById('patientForm').addEventListener('submit', async (e) => {
+const patientForm = document.getElementById('patientForm');
+if (patientForm) {
+  patientForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const data = {
@@ -334,35 +336,41 @@ document.getElementById('patientForm').addEventListener('submit', async (e) => {
         console.error('Error saving patient:', err);
         alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
-});
+  });
+}
+
 //ดึงข้อมูลแพทย์
 document.addEventListener('DOMContentLoaded', async () => {
   // โหลดรายชื่อแพทย์
-  try {
-    const physicians = await window.electronAPI.getPhysicians();
-    const physicianSelect = document.getElementById('physician-select');
-    physicians.forEach(p => {
-      const opt = document.createElement('option');
-      opt.value = p.physician_id;
-      opt.textContent = p.name;
-      physicianSelect.appendChild(opt);
-    });
-  } catch (err) {
-    console.error('Error loading physicians:', err);
+  const physicianSelect = document.getElementById('physician-select');
+  if (physicianSelect) {
+    try {
+      const physicians = await window.electronAPI.getPhysicians();
+      physicians.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.physician_id;
+        opt.textContent = p.name;
+        physicianSelect.appendChild(opt);
+      });
+    } catch (err) {
+      console.error('Error loading physicians:', err);
+    }
   }
 
   // โหลดรายชื่อโรงพยาบาล
-  try {
-    const hospitals = await window.electronAPI.getHospitals();
-    const hospitalSelect = document.getElementById('hospital-select');
-    hospitals.forEach(h => {
-      const opt = document.createElement('option');
-      opt.value = h.hospital_id;
-      opt.textContent = h.name;
-      hospitalSelect.appendChild(opt);
-    });
-  } catch (err) {
-    console.error('Error loading hospitals:', err);
+  const hospitalSelect = document.getElementById('hospital-select');
+  if (hospitalSelect) {
+    try {
+      const hospitals = await window.electronAPI.getHospitals();
+      hospitals.forEach(h => {
+        const opt = document.createElement('option');
+        opt.value = h.hospital_id;
+        opt.textContent = h.name;
+        hospitalSelect.appendChild(opt);
+      });
+    } catch (err) {
+      console.error('Error loading hospitals:', err);
+    }
   }
 });
 
