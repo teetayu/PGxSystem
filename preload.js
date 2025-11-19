@@ -10,5 +10,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getPhysicians: () => ipcRenderer.invoke('get-physicians'),
     getHospitals: () => ipcRenderer.invoke('get-hospitals'),
     getDashboardStats: () => ipcRenderer.invoke('get-dashboard-stats'),
-    getMonthlyPatients: () => ipcRenderer.invoke('get-monthly-patients')
+    getMonthlyPatients: () => ipcRenderer.invoke('get-monthly-patients'),
+    getPatientReports: () => ipcRenderer.invoke('get-patient-reports')
 });

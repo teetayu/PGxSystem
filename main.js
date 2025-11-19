@@ -54,7 +54,13 @@ function createWindow() {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ["default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co;"]
+        'Content-Security-Policy': [
+          "default-src 'self'; " +
+          "script-src 'self'; " +
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+          "font-src 'self' https://fonts.gstatic.com; " +
+          "connect-src 'self' https://*.supabase.co;"
+        ]
       }
     });
   });
@@ -328,6 +334,72 @@ ipcMain.handle('get-monthly-patients', async () => {
     throw err;
   }
 });
+
+// Handler: ดึงรายงานผู้ป่วย
+ipcMain.handle('get-patient-reports', async () => {
+  try {
+    // ดึงข้อมูลผู้ป่วย
+    const { data: patientsData, error: patientsError } = await supabase
+      .from('patients')
+      .select('users_id, fname, lname, hospital_number');
+
+    if (patientsError) throw patientsError;
+
+    // ดึงข้อมูล orders
+    const { data: ordersData, error: ordersError } = await supabase
+      .from('orders')
+      .select('users_id, status_id, operation_id, inspection_code');
+
+    if (ordersError) throw ordersError;
+
+    const { data: geneData, error: geneError } = await supabase
+      .from('genotype')
+      .select('gene_id, gene_name');
+
+    if (geneError) throw geneError;
+
+    // JOIN แบบ JS
+    const reports = patientsData.map((pt, index) => {
+      const order = ordersData.find(o => o.users_id === pt.users_id);
+
+      // Debug log
+      if (index === 0) {
+        console.log('🔍 Sample patient:', pt);
+        console.log('🔍 Patient users_id:', pt.users_id);
+        console.log('🔍 Order found:', order);
+        console.log('🔍 Order status_id:', order?.status_id);
+        console.log('🔍 All orders:', ordersData);
+        console.log('🔍 All genes:', geneData);
+      }
+
+      // แปลง status_id → ข้อความ
+      const statusText =
+        order?.status_id === 1 ? "รอดำเนินการ" :
+        order?.status_id === 2 ? "สำเร็จ" :
+        "ไม่มีข้อมูล";
+      const geneName =
+       order ? geneData.find(g => g.gene_id === order.inspection_code)?.gene_name || "N/A" : "N/A";
+
+      return {
+        no: index + 1,
+        fullName: `${pt.fname} ${pt.lname}`,
+        hn: pt.hospital_number,
+        status: statusText,              // ← ใช้ statusText แทน status_id
+        operation: order?.operation_id ?? "N/A",
+        genotype: order?.inspection_code ?? "N/A",
+        patientId: pt.users_id
+      };
+    });
+
+    return reports;
+
+  } catch (err) {
+    console.error("Get patient reports error:", err);
+    throw err;
+  }
+});
+
+
 
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 

@@ -1,52 +1,36 @@
-// โหลดชื่อผู้ใช้จาก sessionStorage
-document.addEventListener('DOMContentLoaded', () => {
+// โหลดชื่อผู้ใช้จาก sessionStorage และโหลดข้อมูลรายงาน
+document.addEventListener('DOMContentLoaded', async () => {
+  // แสดงชื่อผู้ใช้
   const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
   const userNameBtn = document.querySelector('.newPatients');
   
   if (userNameBtn && currentUser.first_name) {
     userNameBtn.textContent = `${currentUser.first_name} ${currentUser.last_name}`;
   }
+
+  // โหลดข้อมูลรายงานจาก database
+  try {
+    console.log('🔄 Loading patient reports...');
+    const reportData = await window.electronAPI.getPatientReports();
+    console.log('📊 Report data:', reportData);
+    renderReportTable(reportData);
+  } catch (err) {
+    console.error('❌ Error loading reports:', err);
+    // แสดงข้อมูลตัวอย่างถ้า error
+    renderReportTable([]);
+  }
 });
-
-// ระบุจุดที่จะเติมข้อมูล
-const tbody = document.getElementById("report-body");
-
-fetch("") //ใช้คำสั่ง fetch() เพื่อเรียก API ที่ backend เตรียมไว้
-  .then((response) => response.json()) // แปลงข้อมูลที่ได้ให้เป็น JSON
-  .then((data) => {
-    console.log(data); // ดูข้อมูลที่ backend ส่งมา
-  });
-
-// ตัวอย่างข้อมูลจำลอง (Mock data) รอ back end พร้อมค่อยลบ
-const reportData = [
-  {
-    no: 1,
-    fullName: "นายเทส ทดสอบ",
-    hn: "HN000011",
-    status: "รอดำเนินการ",
-    genotype: "CYP2C9",
-  },
-  {
-    no: 2,
-    fullName: "นายราม ไชยราบ",
-    hn: "HN000012",
-    status: "รอดำเนินการ",
-    genotype: "VKORC1",
-  },
-  {
-    no: 3,
-    fullName: "นายอาม นานมาก",
-    hn: "HN000013",
-    status: "รอดำเนินการ",
-    genotype: "CYP2C19",
-  },
-];
 
 // ฟังก์ชันแสดงข้อมูลในตาราง
 function renderReportTable(data) {
   const tbody = document.getElementById("report-body");
   tbody.innerHTML = ""; // เคลียร์ของเก่าออก
 
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">ไม่มีข้อมูล</td></tr>';
+    return;
+  }
+  
   data.forEach((item) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -55,28 +39,24 @@ function renderReportTable(data) {
       <td>${item.hn}</td>
       <td><span class="badge">${item.status}</span></td>
       <td>${item.genotype}</td>
-      <td><button class="muted-btn" onclick="editRow(${item.no})">แก้ไข</button></td>
-      <td><button class="select-btn" onclick="viewResult(${item.no})">เลือก</button></td>
+      <td><button class="muted-btn" onclick="editRow(${item.patientId})">แก้ไข</button></td>
+      <td><button class="select-btn" onclick="viewResult(${item.patientId})">เลือก</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// ✅ ฟังก์ชันเมื่อกดปุ่ม “แก้ไข”
-function editRow(no) {
-  // ส่งหมายเลข (no) ไปยังหน้า MedicalTechPatient.html ผ่านพารามิเตอร์ URL
-  window.location.href = `medicaltechReportCYP2D6.html?id=${no}`;
+// ✅ ฟังก์ชันเมื่อกดปุ่ม "แก้ไข"
+function editRow(patientId) {
+  // ส่ง patient_id ไปยังหน้ารายละเอียด
+  window.location.href = `medicaltechReportCYP2D6.html?id=${patientId}`;
 }
 
-// เมื่อกดปุ่ม “เลือก”
-function selectRow(no) {
-  window.location.href = ``;
+// เมื่อกดปุ่ม "เลือก"
+function viewResult(patientId) {
+  // ส่ง patient_id ไปยังหน้าผลตรวจ
+  window.location.href = `medicaltechReportCYP2D6Detail.html?id=${patientId}`;
 }
-
-// เริ่มแสดงข้อมูลเมื่อหน้าโหลดเสร็จ
-document.addEventListener("DOMContentLoaded", () => {
-  renderReportTable(reportData);
-});
 
 //ปุ่ม 3 ปุ่ม ใน menu
 document.addEventListener("DOMContentLoaded", () => {
