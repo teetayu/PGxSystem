@@ -8,5 +8,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     login: (email, password) => ipcRenderer.invoke('login', { email, password }),   
     createPatient: (patientData) => ipcRenderer.invoke('create-patient', patientData),
     getPhysicians: () => ipcRenderer.invoke('get-physicians'),
-    getHospitals: () => ipcRenderer.invoke('get-hospitals')
+    getHospitals: () => ipcRenderer.invoke('get-hospitals'),
+    getPatients: () => ipcRenderer.invoke('get-patients'),
+    getPatientOrders: () => ipcRenderer.invoke('get-patient-orders'),
+    getCyp2c9Result: (payload) => ipcRenderer.invoke('get-cyp2c9-result', payload)
 });
