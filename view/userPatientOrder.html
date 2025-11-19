@@ -14,7 +14,7 @@
 
     <div class="userPatientOrder">
         <!-- Sidebar -->
-        <div class="sidebarUser" id="sidebarUser"></div>
+        <div class="sidebarDoctor" id="sidebarDoctor"></div>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -44,7 +44,7 @@
                                 <div class="form-field1">
                                     <div class="form-label">เหตุผลที่สั่งตรวจ :</div>
                                     <div class="input">
-                                        <input class="input1" type="text" name="order"
+                                        <input id="order-reason-input" class="input1" type="text" name="orderReason"
                                             placeholder="ระบุเหตุผลการสั่งตรวจ" required />
                                     </div>
                                 </div>
@@ -53,14 +53,14 @@
                                     <div class="form-field2">
                                         <div class="form-label">ยาที่ผู้ป่วยได้รับในปัจจุบัน</div>
                                         <div class="input">
-                                            <input class="input2" type="text" name="order"
+                                            <input id="current-meds-input" class="input2" type="text" name="currentMeds"
                                                 placeholder="ระบุยาที่ผู้ป่วยได้รับ" required />
                                         </div>
                                     </div>
                                     <div class="form-field2">
                                         <div class="form-label">โปรดระบุชนิดของยาที่จะใช้ในการรักษา : </div>
                                         <div class="input">
-                                            <input class="input3" type="text" name="medicine"
+                                            <input id="treatment-drug-input" class="input3" type="text" name="treatmentDrug"
                                                 placeholder="ระบุยาที่จะใช้ในการรักษา" required />
                                         </div>
                                     </div>
@@ -492,7 +492,7 @@
 
                         <!--ปุ่ม-->
                         <div class="form-actions">
-                            <button type="submit" class="btn-secondary">บันทึกการส่งตรวจ</button>
+                            <button type="button" id="submit-order-btn" class="btn-secondary">บันทึกการส่งตรวจ</button>
                         </div>
                         
                     </div>
@@ -503,7 +503,7 @@
     </div>
 
     <script src="js/userPatientOrder.js"></script>
-    <script src="js/sidebarUser.js"></script>
+    <script src="js/sidebarDoctor.js"></script>
 
 </body>
 

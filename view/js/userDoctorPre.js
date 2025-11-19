@@ -1,20 +1,23 @@
-// ----- MOCK DATA (รอแทนด้วยข้อมูลจริงจาก backend) -----
-const mockOrder = {
-    patient: {
-        name: 'นายเทส ทดสอบ',
-        hn: 'HN00001',
-        physician: 'นายแพทย์ อิสราพงษ์ ชุ่มอ้อ'
-    },
-    tests: [
-        { code: '400097', name: 'Genomic DNA Extraction' },
-        { code: '410028', name: 'PGx for Acetaminophen (CYP2D6)' }
-    ],
-    extra: {
-        collectedAt: '29/10/2023 10:30',
-        collector: 'คุณสมชาย ทดสอบ',
-        specimenType: 'BloodEDTA',
-        containerNo: 'TUBE123456'
+// ----- Load order from previous page or fallback to mock -----
+function loadOrder() {
+    try {
+        const raw = localStorage.getItem('pgxOrderDraft');
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        console.error('Failed parsing pgxOrderDraft', e);
+        return null;
     }
+}
+
+const fallbackMock = {
+    patient: { name: 'N/A', hn: 'N/A', physician: 'N/A' },
+    tests: [],
+    reason: '',
+    currentMeds: '',
+    treatmentDrug: '',
+    createdAt: '',
+    extra: { collectedAt: '', collector: '', specimenType: '', containerNo: '' }
 };
 
 // ----- RENDER FUNCTIONS -----
@@ -42,17 +45,33 @@ function renderOrder(order) {
     }
 
     // ข้อมูลเพิ่มเติม
+    // Reason
+    setText('order-reason', order?.reason);
+
+    // Fill medicine note inputs if present
+    const treatmentInput = document.querySelector('.medicine-note input[name="order"]');
+    // There are two inputs with name="order" in template; queryAll and map
+    const noteInputs = document.querySelectorAll('.medicine-note input');
+    if (noteInputs.length >= 2) {
+        // First: treatmentDrug, Second: currentMeds (based on template order)
+        if (noteInputs[0]) noteInputs[0].value = order?.treatmentDrug || '';
+        if (noteInputs[1]) noteInputs[1].value = order?.currentMeds || '';
+    }
+
+    // Extra info (if later provided)
     setText('collected-at', order?.extra?.collectedAt);
     setText('collector', order?.extra?.collector);
     setText('specimen-type', order?.extra?.specimenType);
     setText('container-no', order?.extra?.containerNo);
 }
 
-// ----- เรียกใช้ตอนนี้ด้วย mock -----
-renderOrder(mockOrder);
+// Attempt load and render
+const loaded = loadOrder() || fallbackMock;
+renderOrder(loaded);
 
 // ----- ตัวอย่างการเรียกใช้เมื่อได้ข้อมูลจาก backend -----
+// Example future integration (replace localStorage):
 // fetch('/api/orders/123')
 //   .then(res => res.json())
-//   .then(renderOrder)
+//   .then(order => { renderOrder(order); localStorage.removeItem('pgxOrderDraft'); })
 //   .catch(console.error);

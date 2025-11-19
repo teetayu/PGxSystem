@@ -102,4 +102,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // แสดงผลครั้งแรก (กรณีมีค่าเช็คไว้ใน HTML)
     render();
+
+    // ---- Submit Order Handler ----
+    const submitBtn = document.getElementById('submit-order-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            try {
+                const orderReason = document.getElementById('order-reason-input')?.value?.trim() || '';
+                const currentMeds = document.getElementById('current-meds-input')?.value?.trim() || '';
+                const treatmentDrug = document.getElementById('treatment-drug-input')?.value?.trim() || '';
+
+                // Collect selected tests from rendered table
+                const testRows = Array.from(document.querySelectorAll('#selected-tests-body tr'));
+                const tests = testRows.map(r => {
+                    const cells = r.querySelectorAll('td');
+                    return {
+                        code: (cells[0]?.textContent || '').trim(),
+                        name: (cells[1]?.textContent || '').trim()
+                    };
+                });
+
+                const orderDraft = {
+                    patient: {
+                        name: document.getElementById('patient-name')?.textContent?.trim() || '',
+                        hn: document.getElementById('patient-hn')?.textContent?.trim() || '',
+                        physician: document.getElementById('patient-doctor')?.textContent?.trim() || ''
+                    },
+                    reason: orderReason,
+                    currentMeds,
+                    treatmentDrug,
+                    tests,
+                    createdAt: new Date().toISOString()
+                };
+
+                localStorage.setItem('pgxOrderDraft', JSON.stringify(orderDraft));
+                // Navigate after save
+                window.location.href = '/view/userDoctorPre.html';
+            } catch (err) {
+                console.error('Failed to save order draft', err);
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูลใบสั่งตรวจ');
+            }
+        });
+    }
 });
