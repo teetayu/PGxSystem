@@ -34,7 +34,7 @@
                 <header class="result-card-head">
                     <div class="result-card-title">
                         <div class="result-card-icon-container">
-                            <img type="button" onclick="location.href='/view/doctorReport.html'" src="img/Icon.png" class="result-card-icon-img">
+                            <img type="button" onclick="location.href='doctorReport.html'" src="img/Icon.png" class="result-card-icon-img">
                         </div>
                         <h2>รายละเอียดผลตรวจ</h2>
                     </div>
@@ -61,26 +61,26 @@
                     <table class="result-info-table">
                         <tr>
                             <th>ชื่อ-นามสกุล (Name) :</th>
-                            <td><input class="field" value="นายเทส ทดสอบ"></td>
+                            <td><input id="pt-name" class="field" readonly></td>
 
                             <th>เลขประจำตัว (HN) :</th>
-                            <td><input class="field" value="HN000001"></td>
+                            <td><input id="pt-hn" class="field" readonly></td>
                         </tr>
 
                         <tr>
                             <th>รหัสการตรวจ :</th>
-                            <td><input class="field"></td>
+                            <td><input id="insp-code" class="field" readonly></td>
 
                             <th>ชนิดของยาที่ใช้ในการรักษา :</th>
-                            <td><input class="field"></td>
+                            <td><input id="drug-name" class="field" readonly></td>
                         </tr>
 
                         <tr>
                             <th>ชื่อการตรวจ :</th>
-                            <td><input class="field"></td>
+                            <td><input id="insp-name" class="field" readonly></td>
 
                             <th>ยาที่ผู้ป่วยได้รับในปัจจุบัน :</th>
-                            <td><input class="field"></td>
+                            <td><input id="pt-med" class="field" readonly></td>
                         </tr>
                     </table>
 
@@ -196,5 +196,6 @@
     </div>
 
     <script src="js/sidebarDoctor.js"></script>
+    <script src="js/doctorReport2D6.js"></script>
 </body>
 </html>

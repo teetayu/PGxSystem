@@ -14,7 +14,7 @@
 
     <div class="userDoctorPrePage">
         <!-- Sidebar -->
-        <div class="sidebarUser" id="sidebarUser"></div>
+        <div class="sidebarDoctor" id="sidebarDoctor"></div>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -22,7 +22,7 @@
                 <h1>ใบสั่งตรวจจากแพทย์</h1>
                 <div class="boxRight">
                     <div class="divider"></div>
-                    <img src="/view/img/User.png" alt="user" class="user-img" onclick="">
+                    <img src="img/User.png" alt="user" class="user-img" onclick="">
                     <button class="newPatients">ชื่อผู้ใช้งาน</button>
                 </div>
             </header>
@@ -42,17 +42,17 @@
                                 <!-- Header line with title + barcode -->
                                 <div class="paper-header">
                                     <div class="paper-title">ใบสั่งตรวจ - โรงพยาบาลรามาธิบดี</div>
-                                    <img src="/view/img/barcode.png" alt="barcode" class="barcode-img">
+                                    <img src="img/barcode.png" alt="barcode" class="barcode-img">
                                 </div>
                                 <hr class="paper-sep">
                                 <!-- Patient block -->
                                 <div class="paper-row">
                                     <p class="paper-title">ข้อมูลผู้ป่วย</p>
                                     <div class="date-order">
-                                        <div class="date">
-                                            <div><span class="d">วันที่</span> <span class="d">30/10/2025</span></div>
+                                            <div class="date">
+                                            <div><span class="d">วันที่</span> <span class="d" id="order-date"></span></div>
                                             <div><span class="d">หมายเลขใบสั่งตรวจ :</span> <span
-                                                    class="d">TR0011</span>
+                                                class="d" id="order-id">(ยังไม่บันทึก)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -68,6 +68,7 @@
 
                                 <!-- Table -->
                                 <div class="order-title">รายการตรวจที่สั่ง</div>
+                                <div class="order-reason">เหตุผลการสั่งตรวจ : <span id="physician_order"></span></div>
                                 <div class="order">
                                     <div class="order-table">
                                         <div class="thead">
@@ -80,12 +81,12 @@
                                     <div class="medicine-note">
                                         <div class="note">
                                             <div class="note-k">ชนิดของยาที่จะใช้ในการรักษา :</div>
-                                            <input class="input" type="text" name="order" placeholder="รายละเอียด">
+                                            <input class="input" type="text" name="drug_name" placeholder="รายละเอียด">
                                         </div>
 
                                         <div class="note">
                                             <div class="note-k">ยาที่ผู้ป่วยได้รับในปัจจุบัน :</div>
-                                            <input class="input" type="text" name="order" placeholder="รายละเอียด">
+                                            <input class="input" type="text" name="patient_medication" placeholder="รายละเอียด">
                                         </div>
                                     </div>
                                 </div>
@@ -131,7 +132,7 @@
     </div>
 
     <script src="js/userDoctorPre.js"></script>
-    <script src="js/sidebarUser.js"></script>
+    <script src="js/sidebarDoctor.js"></script>
 
 </body>
 

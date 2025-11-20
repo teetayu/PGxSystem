@@ -104,7 +104,7 @@
                             </div>
                             <div class="geno-divider"></div>
                             <div class="geno-right">
-                                <input type="text" class="geno-input">
+                                <input id="allele2" type="text" class="geno-input" placeholder=" CC / CT / TT">
                             </div>
                         </div>
 
@@ -115,35 +115,32 @@
                             </div>
                             <div class="geno-divider"></div>
                             <div class="geno-right">
-                               <input type="text" class="geno-input">
+                               <input id="allele3" type="text" class="geno-input" placeholder=" AA / AC / CC">
                             </div>
                         </div>
 
                         <div class="geno-row">
                             <div class="geno-left">
                                 <span class="geno-label">Predicted Genotype :</span>
-                                <span class="geno-text"></span>
                             </div>
                             <div class="geno-divider"></div>
-                            <div class="geno-right"></div>
+                            <div class="geno-right"><span id="predictedGenotype" class="geno-value"></span></div>
                         </div>
 
                         <div class="geno-row">
                             <div class="geno-left">
                                 <span class="geno-label">Predicted Phenotype :</span>
-                                <span class="geno-text"></span>
                             </div>
                             <div class="geno-divider"></div>
-                            <div class="geno-right"></div>
+                            <div class="geno-right"><span id="predictedPhenotype" class="geno-value"></span></div>
                         </div>
 
                         <div class="geno-row">
                             <div class="geno-left">
                                 <span class="geno-label">Therapeutic recommendation :</span>
-                                <span class="geno-text"></span>
                             </div>
                             <div class="geno-divider"></div>
-                            <div class="geno-right"></div>
+                            <div class="geno-right"><span id="therapeuticRec" class="geno-value"></span></div>
                         </div>
 
                     </div>
@@ -184,53 +181,8 @@
         </div>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const openBtn   = document.querySelector('.btn-revise');
-        const modal     = document.getElementById('revise-modal');
-        const textarea  = modal.querySelector('.modal-textarea');
-        const closeBtns = modal.querySelectorAll('.modal-close, .modal-btn.cancel');
-
-        // เปิด modal เมื่อกด "ส่งแก้ไขผลตรวจ"
-        if (openBtn && modal) {
-            openBtn.addEventListener('click', function () {
-                modal.classList.add('show');
-                textarea.value = "";
-                textarea.focus();
-            });
-        }
-
-        // ปิด modal เมื่อกด X หรือ ยกเลิก
-        closeBtns.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                modal.classList.remove('show');
-            });
-        });
-
-        // คลิกพื้นหลังดำ ปิด modal
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) {
-                modal.classList.remove('show');
-            }
-        });
-
-        // กด "ส่งแก้ไข" ใน modal
-        const submitBtn = modal.querySelector('.modal-btn.submit');
-        submitBtn.addEventListener('click', function () {
-            const message = textarea.value.trim();
-            if (!message) {
-                alert('กรุณากรอกรายละเอียดที่ต้องการให้แก้ไข');
-                return;
-            }
-            // TODO: ส่ง message ไป backend ตามจริง
-            console.log('ส่งคำขอแก้ไขผลตรวจ:', message);
-
-            modal.classList.remove('show');
-            // alert('ส่งคำขอแก้ไขเรียบร้อยแล้ว');
-        });
-    });
-    </script>
 
     <script src="js/sidebarPharmacy.js"></script>
+    <script src="js/pharmacyReportCYP2D6.js"></script>
 </body>
 </html>

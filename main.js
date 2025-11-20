@@ -49,18 +49,31 @@ function createWindow() {
 
   
 
-  // CSP header configuration
+  // CSP header configuration (extended for Google Fonts) + debug output
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    const csp = [
+      "default-src 'self';",
+      "script-src 'self' 'unsafe-inline';",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+      "style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';",
+      "font-src 'self' https://fonts.gstatic.com data:;",
+      "connect-src 'self' https://*.supabase.co;",
+      "img-src 'self' data:;",
+      "object-src 'none';"
+    ].join(' ');
+    console.log('[CSP Applied]', csp);
     callback({
       responseHeaders: {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           "default-src 'self'; " +
-          "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
+          "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
-          "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
+          "style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline'; " +
+          "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " +
           "img-src 'self' data:; " +
-          "connect-src 'self' https://*.supabase.co;"
+          "connect-src 'self' https://*.supabase.co; " +
+          "object-src 'none';"
         ]
       }
     });
@@ -265,6 +278,126 @@ ipcMain.handle('get-physicians', async () => {
 
   return data ?? [];
 });
+// Event: ดึงรายการตรวจพร้อมข้อมูลผู้ป่วยและ gene
+ipcMain.handle('get-patient-orders', async () => {
+  console.log('[IPC] get-patient-orders invoked');
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        order_id,
+        inspection_code,
+        status_id,
+        status:status_id (
+          status_name
+        ),
+        order_date,
+        patient:users_id (
+          users_id,
+          hospital_number,
+          fname,
+          lname
+        ),
+        inspection:inspection_code (
+          inspection_code,
+          inspection_name,
+          gene:gene_id (
+            gene_id,
+            gene_name
+          )
+        )
+      `)
+      .order('order_date', { ascending: false })
+
+    if (error) {
+      console.error('Supabase get-patient-orders Error:', error)
+      throw new Error(error.message)
+    }
+    console.log('[IPC] get-patient-orders rows:', (data || []).length)
+    return data ?? []
+  } catch (err) {
+    console.error('get-patient-orders failed:', err)
+    throw err
+  }
+})
+
+// Event: ดึงรายละเอียดใบสั่งตรวจ (Single Order)
+ipcMain.handle('get-order-detail', async (event, orderId) => {
+  console.log('[IPC] get-order-detail invoked for:', orderId);
+  try {
+    if (!orderId) return null;
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        status:status_id (status_name),
+        patient:users_id (
+          users_id,
+          hospital_number,
+          fname,
+          lname
+        ),
+        inspection:inspection_code (
+          inspection_code,
+          inspection_name,
+          gene:gene_id (
+            gene_id,
+            gene_name
+          )
+        )
+      `)
+      .eq('order_id', orderId)
+      .single();
+
+    if (error) {
+      console.error('Supabase get-order-detail Error:', error);
+      throw new Error(error.message);
+    }
+    return data;
+  } catch (err) {
+    console.error('get-order-detail failed:', err);
+    throw err;
+  }
+});
+
+// Event: ดึงผล CYP2C9/CYP2D6 ตามค่า allele ที่ป้อน (ใช้ตาราง cyp2d6 ตาม schema ที่ให้มา)
+ipcMain.handle('get-cyp2c9-result', async (event, { var2, var3 }) => {
+  try {
+    if (!var2 || !var3) {
+      return { success: false, message: 'ต้องระบุค่า CYP2C9*2 และ CYP2C9*3 ทั้งคู่' }
+    }
+
+    // Column names มีตัวพิเศษ ต้องใส่ในเครื่องหมายคำพูดคู่เพื่อให้ PostgREST ประมวลผลถูกต้อง
+    const col2 = '"CYP2C9*2(430C>T)"'
+    const col3 = '"CYP2C9*3(1075A>C)"'
+    console.log('[IPC] get-cyp2c9-result alleles:', var2, var3)
+
+    const { data, error } = await supabase
+      .from('cyp2d6')
+      .select(`predicted_genotype,predicted_phenotype,therapeutic_recommendation,${col2},${col3}`)
+      .eq(col2, var2)
+      .eq(col3, var3)
+      .limit(1)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Supabase get-cyp2c9-result Error:', error)
+      let msg = error.message
+      if (/does not exist/i.test(msg)) {
+        msg += '\nตรวจสอบชื่อคอลัมน์ในตาราง cyp2d6 ว่าตรงกับ schema และต้องมีเครื่องหมายคำพูดคู่.'
+      }
+      return { success: false, message: msg }
+    }
+    if (!data) {
+      return { success: false, message: 'ไม่พบข้อมูลที่ตรงกับค่า allele ที่ระบุ' }
+    }
+    const { predicted_genotype, predicted_phenotype, therapeutic_recommendation } = data
+    return { success: true, data: { predicted_genotype, predicted_phenotype, therapeutic_recommendation } }
+  } catch (err) {
+    console.error('get-cyp2c9-result failed:', err)
+    return { success: false, message: 'เกิดข้อผิดพลาด' }
+  }
+})
 
 // Event: ดึงรายชื่อโรงพยาบาล
 ipcMain.handle('get-hospitals', async () => {
@@ -480,6 +613,168 @@ ipcMain.handle('get-orders', async () => {
   } catch (err) {
     console.error('❌ Get orders error:', err);
     throw err;
+  }
+});
+
+// Event: ดึงรายชื่อผู้ป่วยทั้งหมด
+ipcMain.handle('get-patients', async () => {
+  try {
+    // ดึงข้อมูลผู้ป่วย
+    const { data, error } = await supabase
+      .from('patients')
+      .select('*') // เลือกทุกคอลัมน์เพื่อตรวจ schema ได้ง่าย
+        .order('hospital_number', { ascending: true });
+      
+    if (error) throw error;
+    return data ?? [];
+  } catch (err) {
+    console.error('get-patients failed:', err);
+    throw new Error(err.message || 'get-patients failed');
+  }
+});
+
+// ===== Helper: สร้างรหัส order_id ใหม่ (รูปแบบ TRO0001 ... ) =====
+async function generateNextOrderId() {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('order_id')
+      .order('order_id', { ascending: false })
+      .limit(1);
+    if (error) {
+      console.warn('Cannot fetch last order_id:', error.message);
+      return 'TRO0001';
+    }
+    const last = (data && data[0] && data[0].order_id) || '';
+    const m = /TRO(\d{4})/i.exec(last);
+    let num = m ? parseInt(m[1], 10) + 1 : 1;
+    if (num > 9999) num = 1; // rollover (simple)
+    return 'TRO' + String(num).padStart(4, '0');
+  } catch (e) {
+    console.warn('generateNextOrderId fallback:', e.message);
+    return 'TRO0001';
+  }
+}
+
+// ===== Helper: upsert inspections_code (หากยังไม่มี) =====
+async function upsertInspectionCode(code, name, geneId = null) {
+  if (!code) return { success: false, message: 'No code provided' };
+  try {
+    // Primary attempt using inspection_code
+    // Try with gene_id first
+    let { error } = await supabase
+      .from('inspections_code')
+      .upsert({
+        inspection_code: code,
+        inspection_name: name || code,
+        gene_id: geneId
+      }, { onConflict: 'inspection_code' });
+    
+    if (error) {
+      console.warn('upsertInspectionCode with gene_id failed:', code, error.message);
+      // Fallback: try without gene_id (set to null) to avoid FK issues if gene_id is invalid
+      if (geneId !== null) {
+         const { error: err2 } = await supabase
+            .from('inspections_code')
+            .upsert({
+                inspection_code: code,
+                inspection_name: name || code,
+                gene_id: null
+            }, { onConflict: 'inspection_code' });
+         if (err2) {
+             console.error('upsertInspectionCode fallback failed:', err2.message);
+             return { success: false, message: err2.message };
+         }
+      } else {
+          return { success: false, message: error.message };
+      }
+    }
+    return { success: true };
+  } catch (e) {
+    console.warn('upsertInspectionCode exception:', code, e.message);
+    return { success: false, message: e.message };
+  }
+}
+
+// Gene mapping เบื้องต้นจากชื่อ (สามารถปรับภายหลัง)
+function inferGeneIdFromName(name = '') {
+  const n = name.toUpperCase();
+  // ควรแม็ปกับตาราง genes จริง (query) แต่ใช้ hardcode ชั่วคราว
+  const map = {
+    'CYP2D6': 1,
+    'CYP2C19': 2,
+    'CYP3A5': 3,
+    'VKORC1': 4,
+    'TPMT': 5,
+    'HLA': 6,
+    'DPYD': 7,
+    'CYP2C9': 8
+  };
+  for (const key of Object.keys(map)) {
+    if (n.includes(key)) return map[key];
+  }
+  return null;
+}
+
+// ===== IPC: create-order (หลายรายการตรวจในครั้งเดียว) =====
+ipcMain.handle('create-order', async (event, payload) => {
+  // NOTE: ตารางอาจใช้ชื่อคอลัมน์ users_id (ตามโค้ด get-patient-orders เดิม) หรือ user_id ตามภาพ
+  // เราจะรับทั้งสองและใช้ users_id เป็นคีย์หลักในการ insert
+  const { user_id, users_id, physician_order, patient_medication, drug_name, tests } = payload || {};
+  const actorId = users_id || user_id; // เลือกค่าที่มี
+  if (!actorId) return { success: false, message: 'missing users_id' };
+  if (!Array.isArray(tests) || tests.length === 0) return { success: false, message: 'ไม่พบรายการตรวจที่เลือก' };
+
+  const createdIds = [];
+  for (const t of tests) {
+    const code = t.inspection_code || t.code;
+    const name = t.inspection_name || t.name || code;
+    // upsert master
+    const upsertRes = await upsertInspectionCode(code, name, inferGeneIdFromName(name));
+    if (!upsertRes.success) {
+        console.warn(`Skipping order for ${code} due to upsert failure: ${upsertRes.message}`);
+        // Optional: return error or continue? Let's return error to alert user.
+        return { success: false, message: `Failed to register inspection code ${code}: ${upsertRes.message}` };
+    }
+
+    // gen order id
+    const order_id = await generateNextOrderId();
+    const insertObj = {
+      order_id,
+      // Use users_id only as user_id caused schema error
+      users_id: actorId,
+      physician_order: physician_order || '',
+      inspection_code: code,
+      drug_name: drug_name || '',
+      patient_medication: patient_medication || '',
+      status_id: 1, // pending
+      operation_id: 1, // Default operation (Gene Test)
+      order_date: new Date().toISOString()
+    };
+    try {
+      const { error } = await supabase.from('orders').insert([insertObj]);
+      if (error) {
+        console.error('Insert order failed:', error.message);
+        return { success: false, message: error.message };
+      }
+      createdIds.push(order_id);
+    } catch (e) {
+      console.error('Insert order exception:', e.message);
+      return { success: false, message: e.message };
+    }
+  }
+  return { success: true, order_ids: createdIds };
+});
+
+// Event: สั่งพิมพ์หน้าต่าง
+ipcMain.handle('print-window', async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    // silent: false -> เปิด dialog print ของระบบ
+    // printBackground: true -> พิมพ์พื้นหลังด้วย (สี/รูปภาพ)
+    win.webContents.print({ silent: false, printBackground: true }, (success, errorType) => {
+      if (!success) console.log("Print failed:", errorType);
+    });
   }
 });
 
