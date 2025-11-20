@@ -108,31 +108,41 @@ document.addEventListener('DOMContentLoaded', () => {
     if (submitBtn) {
         submitBtn.addEventListener('click', () => {
             try {
-                const orderReason = document.getElementById('order-reason-input')?.value?.trim() || '';
-                const currentMeds = document.getElementById('current-meds-input')?.value?.trim() || '';
-                const treatmentDrug = document.getElementById('treatment-drug-input')?.value?.trim() || '';
+                const physician_order = document.getElementById('physician_order_input')?.value?.trim() || '';
+                const patient_medication = document.getElementById('patient_medication_input')?.value?.trim() || '';
+                const drug_name = document.getElementById('drug_name_input')?.value?.trim() || '';
 
                 // Collect selected tests from rendered table
                 const testRows = Array.from(document.querySelectorAll('#selected-tests-body tr'));
                 const tests = testRows.map(r => {
                     const cells = r.querySelectorAll('td');
                     return {
-                        code: (cells[0]?.textContent || '').trim(),
-                        name: (cells[1]?.textContent || '').trim()
+                        inspection_code: (cells[0]?.textContent || '').trim(),
+                        inspection_name: (cells[1]?.textContent || '').trim()
                     };
                 });
+
+                // Capture order_date (ISO + display)
+                const now = new Date();
+                const order_date = now.toISOString();
+                const order_date_display = now.toLocaleString('th-TH', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                }).replace(',', '');
 
                 const orderDraft = {
                     patient: {
                         name: document.getElementById('patient-name')?.textContent?.trim() || '',
-                        hn: document.getElementById('patient-hn')?.textContent?.trim() || '',
-                        physician: document.getElementById('patient-doctor')?.textContent?.trim() || ''
+                        hospital_number: document.getElementById('patient-hn')?.textContent?.trim() || '',
+                        physician_name: document.getElementById('patient-doctor')?.textContent?.trim() || ''
                     },
-                    reason: orderReason,
-                    currentMeds,
-                    treatmentDrug,
+                    physician_order,
+                    patient_medication,
+                    drug_name,
                     tests,
-                    createdAt: new Date().toISOString()
+                    order_date,            // raw ISO timestamp (for DB insert)
+                    order_date_display,    // formatted for preview
+                    created_at: order_date // keep backward compatibility
                 };
 
                 localStorage.setItem('pgxOrderDraft', JSON.stringify(orderDraft));

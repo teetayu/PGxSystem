@@ -11,12 +11,12 @@ function loadOrder() {
 }
 
 const fallbackMock = {
-    patient: { name: 'N/A', hn: 'N/A', physician: 'N/A' },
+    patient: { name: 'N/A', hospital_number: 'N/A', physician_name: 'N/A' },
     tests: [],
-    reason: '',
-    currentMeds: '',
-    treatmentDrug: '',
-    createdAt: '',
+    physician_order: '',
+    patient_medication: '',
+    drug_name: '',
+    created_at: '',
     extra: { collectedAt: '', collector: '', specimenType: '', containerNo: '' }
 };
 
@@ -28,34 +28,49 @@ function setText(id, value) {
 
 function renderOrder(order) {
     // ชื่อ-เลข HN-แพทย์
+    // Backward compatibility for old keys (hn, physician)
     setText('patient-name', order?.patient?.name);
-    setText('patient-hn', order?.patient?.hn);
-    setText('physician', order?.patient?.physician);
+    setText('patient-hn', order?.patient?.hospital_number || order?.patient?.hn);
+    setText('physician', order?.patient?.physician_name || order?.patient?.physician);
 
     // ตารางรายการตรวจ
     const rowsHost = document.getElementById('order-rows');
     if (rowsHost) {
-        rowsHost.innerHTML = (order?.tests ?? [])
-            .map(t => `
-          <div class="tr">
-            <div class="td code">${t.code ?? ''}</div>
-            <div class="td name">${t.name ?? ''}</div>
-          </div>
-        `).join('');
+                rowsHost.innerHTML = (order?.tests ?? [])
+                        .map(t => `
+                    <div class="tr">
+                        <div class="td code">${t.inspection_code ?? t.code ?? ''}</div>
+                        <div class="td name">${t.inspection_name ?? t.name ?? ''}</div>
+                    </div>
+                `).join('');
     }
 
     // ข้อมูลเพิ่มเติม
     // Reason
-    setText('order-reason', order?.reason);
+    setText('physician_order', order?.physician_order || order?.reason);
+    // Order date (prefer display format, else derive from ISO)
+    let displayDate = order?.order_date_display;
+    if (!displayDate && order?.order_date) {
+        try {
+            const d = new Date(order.order_date);
+            displayDate = d.toLocaleString('th-TH', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+            }).replace(',', '');
+        } catch {}
+    }
+    setText('order-date', displayDate || '');
+    // Order ID placeholder (will be replaced after DB insert if integrated)
+    setText('order-id', order?.order_id || order?.id || '(รอสร้าง)');
 
     // Fill medicine note inputs if present
     const treatmentInput = document.querySelector('.medicine-note input[name="order"]');
     // There are two inputs with name="order" in template; queryAll and map
     const noteInputs = document.querySelectorAll('.medicine-note input');
     if (noteInputs.length >= 2) {
-        // First: treatmentDrug, Second: currentMeds (based on template order)
-        if (noteInputs[0]) noteInputs[0].value = order?.treatmentDrug || '';
-        if (noteInputs[1]) noteInputs[1].value = order?.currentMeds || '';
+        // First: drug_name, Second: patient_medication
+        if (noteInputs[0]) noteInputs[0].value = order?.drug_name || order?.treatmentDrug || '';
+        if (noteInputs[1]) noteInputs[1].value = order?.patient_medication || order?.currentMeds || '';
     }
 
     // Extra info (if later provided)

@@ -49,10 +49,10 @@
                                 <div class="paper-row">
                                     <p class="paper-title">ข้อมูลผู้ป่วย</p>
                                     <div class="date-order">
-                                        <div class="date">
-                                            <div><span class="d">วันที่</span> <span class="d">30/10/2025</span></div>
+                                            <div class="date">
+                                            <div><span class="d">วันที่</span> <span class="d" id="order-date"></span></div>
                                             <div><span class="d">หมายเลขใบสั่งตรวจ :</span> <span
-                                                    class="d">TR0011</span>
+                                                class="d" id="order-id">(ยังไม่บันทึก)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -68,7 +68,7 @@
 
                                 <!-- Table -->
                                 <div class="order-title">รายการตรวจที่สั่ง</div>
-                                <div class="order-reason">เหตุผลการสั่งตรวจ : <span id="order-reason"></span></div>
+                                <div class="order-reason">เหตุผลการสั่งตรวจ : <span id="physician_order"></span></div>
                                 <div class="order">
                                     <div class="order-table">
                                         <div class="thead">
@@ -81,12 +81,12 @@
                                     <div class="medicine-note">
                                         <div class="note">
                                             <div class="note-k">ชนิดของยาที่จะใช้ในการรักษา :</div>
-                                            <input class="input" type="text" name="order" placeholder="รายละเอียด">
+                                            <input class="input" type="text" name="drug_name" placeholder="รายละเอียด">
                                         </div>
 
                                         <div class="note">
                                             <div class="note-k">ยาที่ผู้ป่วยได้รับในปัจจุบัน :</div>
-                                            <input class="input" type="text" name="order" placeholder="รายละเอียด">
+                                            <input class="input" type="text" name="patient_medication" placeholder="รายละเอียด">
                                         </div>
                                     </div>
                                 </div>
