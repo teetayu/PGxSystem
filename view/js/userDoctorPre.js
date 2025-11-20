@@ -90,6 +90,21 @@ function renderOrder(order) {
 const loaded = loadOrder() || fallbackMock;
 renderOrder(loaded);
 
+document.addEventListener('DOMContentLoaded', () => {
+    // ----- Update User Name in Header (Sync with Login) -----
+    try {
+        const raw = sessionStorage.getItem('currentUser');
+        if (raw) {
+            const u = JSON.parse(raw);
+            const fullName = [u.first_name || u.fname, u.last_name || u.lname].filter(Boolean).join(' ');
+            const nameBtn = document.querySelector('.newPatients');
+            if (nameBtn && fullName) nameBtn.textContent = fullName;
+        }
+    } catch (e) {
+        console.warn('Failed to load user info:', e);
+    }
+});
+
 // ----- ตัวอย่างการเรียกใช้เมื่อได้ข้อมูลจาก backend -----
 // Example future integration (replace localStorage):
 // fetch('/api/orders/123')

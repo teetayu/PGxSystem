@@ -22,7 +22,7 @@
                 <h1>สั่งตรวจ</h1>
                 <div class="boxRight">
                     <div class="divider"></div>
-                    <img src="/view/img/User.png" alt="user" class="user-img" onclick="">
+                    <img src="img/User.png" alt="user" class="user-img" onclick="">
                     <button class="newPatients">ชื่อผู้ใช้งาน</button>
                 </div>
             </header>
@@ -33,9 +33,19 @@
                             <div class="form-title">ข้อมูลผู้ป่วย</div>
                             <!-- กล่องข้อมูลผู้ป่วย -->
                             <div id="patient-info" class="patient-info">
-                                <p><strong>ชื่อ-นามสกุล (Name):</strong> <span id="patient-name"></span></p>
-                                <p><strong>เลขประจำตัว (HN):</strong> <span id="patient-hn"></span></p>
-                                <p><strong>แพทย์ (Physician):</strong> <span id="patient-doctor"></span></p>
+                                <div class="form-group">
+                                    <label><strong>ชื่อ-นามสกุล (Name):</strong></label>
+                                    <select id="patient-select" class="input-select">
+                                        <option value="">-- เลือกผู้ป่วย --</option>
+                                    </select>
+                                </div>
+                                <p><strong>เลขประจำตัว (HN):</strong> <span id="patient-hn">-</span></p>
+                                <div class="form-group">
+                                    <label><strong>แพทย์ (Physician):</strong></label>
+                                    <select id="physician-select" class="input-select">
+                                        <option value="">-- เลือกแพทย์ --</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

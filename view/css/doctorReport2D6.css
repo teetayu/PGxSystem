@@ -455,3 +455,64 @@
         padding: 36px 32px 48px;
     }
 }
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    /* Hide non-printable elements */
+    .sidebarDoctor,
+    .patient2-header,
+    .result-card-head,
+    .result-card-footer,
+    .patient2-header-actions,
+    .patient2-search-button,
+    .patient2-header-profile {
+        display: none !important;
+    }
+
+    /* Reset layout */
+    .doctorReport2D6Page,
+    .main-content,
+    .patient2-content {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Style the result card for print */
+    .result-card {
+        border: none !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .result-card-body {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    /* Ensure inputs look like text */
+    input, .field, .geno-input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+    }
+
+    /* Adjust font sizes if needed */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

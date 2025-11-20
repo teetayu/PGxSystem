@@ -549,6 +549,18 @@ ipcMain.handle('create-order', async (event, payload) => {
   return { success: true, order_ids: createdIds };
 });
 
+// Event: สั่งพิมพ์หน้าต่าง
+ipcMain.handle('print-window', async (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    // silent: false -> เปิด dialog print ของระบบ
+    // printBackground: true -> พิมพ์พื้นหลังด้วย (สี/รูปภาพ)
+    win.webContents.print({ silent: false, printBackground: true }, (success, errorType) => {
+      if (!success) console.log("Print failed:", errorType);
+    });
+  }
+});
+
 app.commandLine.appendSwitch('disable-features', 'AutofillServerCommunication');
 
 

@@ -1,3 +1,5 @@
+let selectedPatientId = null; // Global variable to share state
+
 document.addEventListener('DOMContentLoaded', () => {
     // ----- Update User Name in Header (Sync with Login) -----
     try {
@@ -12,20 +14,80 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('Failed to load user info:', e);
     }
 
-    // ----- ข้อมูลตัวอย่าง (ตามภาพ) -----
-    const mock = {
-        name: 'นายเทส ทดสอบ',
-        hn: 'HN00001',
-        physician: 'นายแพทย์ อิสราพงษ์ ชุ่มอ้อ'
+    // ----- Load Patients & Physicians -----
+    let allPatients = [];
+    // selectedPatientId is now global
+
+    const loadData = async () => {
+        try {
+            // Load Physicians
+            const physicians = await window.electronAPI.getPhysicians();
+            const docSelect = document.getElementById('physician-select');
+            if (docSelect) {
+                docSelect.innerHTML = '<option value="">-- เลือกแพทย์ --</option>';
+                physicians.forEach(doc => {
+                    const opt = document.createElement('option');
+                    opt.value = doc.physician_id; // Assuming ID is needed, or name?
+                    // If the order needs physician name text, we can store it.
+                    // But usually we store ID. The current create-order doesn't seem to take physician_id, only physician_order (text).
+                    // Wait, create-patient takes physician_id.
+                    // create-order schema in main.js: users_id, physician_order, inspection_code...
+                    // It doesn't seem to save the "Treating Physician" for the order itself, unless it's 'physician_order' (which is reason).
+                    // The UI has "Physician" in patient info. This might be the patient's primary doctor.
+                    // If so, it should be auto-filled from patient data, OR selected for this specific order.
+                    // The user request says: "ชื่อรายการแพทย์ดึงมาจาก table physicians ... มันlink กับ physician_id"
+                    // So I should probably allow selecting it.
+                    opt.textContent = doc.physician_name;
+                    docSelect.appendChild(opt);
+                });
+            }
+
+            // Load Patients
+            allPatients = await window.electronAPI.getPatients();
+            const patSelect = document.getElementById('patient-select');
+            if (patSelect) {
+                patSelect.innerHTML = '<option value="">-- เลือกผู้ป่วย --</option>';
+                allPatients.forEach(p => {
+                    const opt = document.createElement('option');
+                    const fullName = [p.fname, p.lname].filter(Boolean).join(' ');
+                    const hn = p.hospital_number || '';
+                    // Use users_id as value (fallback to id if users_id is missing)
+                    opt.value = p.users_id || p.id || p.patient_id; 
+                    opt.textContent = `${fullName}`;
+                    patSelect.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load initial data:', err);
+        }
     };
+    loadData();
 
-    // เติมลงหน้า
-    document.getElementById('patient-name').textContent = mock.name;
-    document.getElementById('patient-hn').textContent = mock.hn;
-    document.getElementById('patient-doctor').textContent = mock.physician;
+    // Handle Patient Selection
+    const patSelect = document.getElementById('patient-select');
+    const hnSpan = document.getElementById('patient-hn');
+    const docSelect = document.getElementById('physician-select');
+    
+    if (patSelect) {
+        patSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const found = allPatients.find(p => (p.users_id || p.id || p.patient_id) == val);
 
-    // ถ้าภายหลังมีแบ็กเอนด์แล้ว ให้ลบโค้ดด้านบนนี้ทิ้ง
-    // แล้วเรียกฟังก์ชัน fetch จากตัวอย่างก่อนหน้าแทน
+            if (found) {
+                hnSpan.textContent = found.hospital_number || '-';
+                selectedPatientId = val;
+                
+                // Auto-select physician if patient has one
+                if (found.physician_id && docSelect) {
+                    docSelect.value = found.physician_id;
+                }
+            } else {
+                hnSpan.textContent = '-';
+                selectedPatientId = null;
+                if (docSelect) docSelect.value = "";
+            }
+        });
+    }
 });
 
 // เมื่อกดปุ่มแท็บ เลือกรายการตรวจวินิจฉัย
@@ -139,19 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // mock user_id จาก sessionStorage (ควรใช้ user.user_id หลัง login จริง)
-                let users_id = null; // ใช้ชื่อ users_id ตาม get-patient-orders
-                try {
-                    const raw = sessionStorage.getItem('currentUser');
-                    if (raw) {
-                        const u = JSON.parse(raw);
-                        users_id = u.user_id; // mapping ให้ตรงกับ schema (users_id ใน orders)
-                    }
-                } catch {}
-                if (!users_id) {
-                    alert('ไม่พบข้อมูลผู้ใช้ (user_id) กรุณาเข้าสู่ระบบใหม่');
+                // ใช้ selectedPatientId ที่ได้จากการเลือกผู้ป่วย
+                if (!selectedPatientId) {
+                    alert('กรุณาเลือกผู้ป่วยจากรายการ (ค้นหาและเลือก)');
                     return;
                 }
+                const users_id = selectedPatientId;
 
                 const createPayload = {
                     users_id,
@@ -177,11 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     hour: '2-digit', minute: '2-digit'
                 }).replace(',', '');
 
+                // Get Physician Name
+                const docSelect = document.getElementById('physician-select');
+                const docName = docSelect && docSelect.selectedIndex >= 0 ? docSelect.options[docSelect.selectedIndex].text : '';
+
                 const orderDraft = {
                     patient: {
-                        name: document.getElementById('patient-name')?.textContent?.trim() || '',
+                        name: document.getElementById('patient-select')?.options[document.getElementById('patient-select').selectedIndex]?.text?.trim() || '',
                         hospital_number: document.getElementById('patient-hn')?.textContent?.trim() || '',
-                        physician_name: document.getElementById('patient-doctor')?.textContent?.trim() || ''
+                        physician_name: docName
                     },
                     physician_order,
                     patient_medication,

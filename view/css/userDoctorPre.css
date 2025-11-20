@@ -342,47 +342,49 @@
         margin: 10mm 12mm;
     }
 
-    /* ซ่อนทุกอย่างในหน้า (ยังคงกินที่อยู่) */
-    body * {
-        visibility: hidden !important;
+    /* ซ่อนส่วนประกอบที่ไม่ต้องการพิมพ์ */
+    .sidebarDoctor,
+    .header,
+    .newPatients,
+    .btn-print,
+    .panel-head,
+    .sidebarPharmacy,
+    .patient2-header,
+    .result-card-head,
+    .result-card-footer,
+    .boxRight,
+    .panel-title {
+        display: none !important;
+    }
+
+    /* ปรับ layout ให้เต็มหน้า */
+    .userDoctorPrePage,
+    .main-content,
+    .patientBig,
+    .patient-box,
+    .patient-infor {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        background: white !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
     /* แสดงเฉพาะโซนที่จะพิมพ์ */
-    #print-area,
-    #print-area * {
-        visibility: visible !important;
-    }
-
-    /* วาง print-area ให้เต็มหน้า */
     #print-area {
-        position: fixed;
-        /* หรือ absolute ก็ได้ ถ้าไม่มี position อื่นบัง */
-        inset: 0;
-        /* top:0; right:0; bottom:0; left:0; */
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        width: 100% !important;
-        background: #fff !important;
-    }
-
-    /* กันบล็อกสำคัญถูกตัดหน้า */
-    .paper,
-    .order,
-    .order-table,
-    .box-infor,
-    .sign-row {
-        break-inside: avoid;
-        page-break-inside: avoid;
     }
 
     /* ให้สี/เส้นคมตอนพิมพ์ */
     * {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
-    }
-
-    /* ซ่อนปุ่มพิมพ์เอง */
-    .btn-print {
-        display: none !important;
     }
 }
