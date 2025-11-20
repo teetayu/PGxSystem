@@ -49,12 +49,23 @@ function createWindow() {
 
   
 
-  // CSP header configuration
+  // CSP header configuration (extended for Google Fonts) + debug output
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    const csp = [
+      "default-src 'self';",
+      "script-src 'self';",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+      "style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';",
+      "font-src 'self' https://fonts.gstatic.com data:;",
+      "connect-src 'self' https://*.supabase.co;",
+      "img-src 'self' data:;",
+      "object-src 'none';"
+    ].join(' ');
+    console.log('[CSP Applied]', csp);
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ["default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co;"]
+        'Content-Security-Policy': [csp]
       }
     });
   });
@@ -254,6 +265,87 @@ ipcMain.handle('get-physicians', async () => {
 
   return data ?? [];
 });
+// Event: ดึงรายการตรวจพร้อมข้อมูลผู้ป่วยและ gene
+ipcMain.handle('get-patient-orders', async () => {
+  console.log('[IPC] get-patient-orders invoked');
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        order_id,
+        inspection_code,
+        status_id,
+        status:status_id (
+          status_name
+        ),
+        order_date,
+        patient:users_id (
+          users_id,
+          hospital_number,
+          fname,
+          lname
+        ),
+        inspection:inspection_code (
+          inspection_code,
+          inspection_name,
+          gene:gene_id (
+            gene_id,
+            gene_name
+          )
+        )
+      `)
+      .order('order_date', { ascending: false })
+
+    if (error) {
+      console.error('Supabase get-patient-orders Error:', error)
+      throw new Error(error.message)
+    }
+    console.log('[IPC] get-patient-orders rows:', (data || []).length)
+    return data ?? []
+  } catch (err) {
+    console.error('get-patient-orders failed:', err)
+    throw err
+  }
+})
+
+// Event: ดึงผล CYP2C9/CYP2D6 ตามค่า allele ที่ป้อน (ใช้ตาราง cyp2d6 ตาม schema ที่ให้มา)
+ipcMain.handle('get-cyp2c9-result', async (event, { var2, var3 }) => {
+  try {
+    if (!var2 || !var3) {
+      return { success: false, message: 'ต้องระบุค่า CYP2C9*2 และ CYP2C9*3 ทั้งคู่' }
+    }
+
+    // Column names มีตัวพิเศษ ต้องใส่ในเครื่องหมายคำพูดคู่เพื่อให้ PostgREST ประมวลผลถูกต้อง
+    const col2 = '"CYP2C9*2(430C>T)"'
+    const col3 = '"CYP2C9*3(1075A>C)"'
+    console.log('[IPC] get-cyp2c9-result alleles:', var2, var3)
+
+    const { data, error } = await supabase
+      .from('cyp2d6')
+      .select(`predicted_genotype,predicted_phenotype,therapeutic_recommendation,${col2},${col3}`)
+      .eq(col2, var2)
+      .eq(col3, var3)
+      .limit(1)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Supabase get-cyp2c9-result Error:', error)
+      let msg = error.message
+      if (/does not exist/i.test(msg)) {
+        msg += '\nตรวจสอบชื่อคอลัมน์ในตาราง cyp2d6 ว่าตรงกับ schema และต้องมีเครื่องหมายคำพูดคู่.'
+      }
+      return { success: false, message: msg }
+    }
+    if (!data) {
+      return { success: false, message: 'ไม่พบข้อมูลที่ตรงกับค่า allele ที่ระบุ' }
+    }
+    const { predicted_genotype, predicted_phenotype, therapeutic_recommendation } = data
+    return { success: true, data: { predicted_genotype, predicted_phenotype, therapeutic_recommendation } }
+  } catch (err) {
+    console.error('get-cyp2c9-result failed:', err)
+    return { success: false, message: 'เกิดข้อผิดพลาด' }
+  }
+})
 
 // Event: ดึงรายชื่อโรงพยาบาล
 ipcMain.handle('get-hospitals', async () => {
@@ -269,63 +361,19 @@ ipcMain.handle('get-hospitals', async () => {
 
   return data ?? [];
 });
-
-// Event: ดึงสถิติ dashboard
-ipcMain.handle('get-dashboard-stats', async () => {
-  try {
-    const { count: totalPatients, error: patientsError } = await supabase
-      .from('patients')
-      .select('*', { count: 'exact', head: true });
-
-    if (patientsError) throw patientsError;
-
-    return {
-      success: true,
-      stats: {
-        totalPatients: totalPatients || 0,
-        // เพิ่ม stats อื่น ๆ ได้ที่นี่
-      }
-    };
-  } catch (err) {
-    console.error('Get dashboard stats error:', err);
-    return { success: false, message: err.message };
-  }
-});
-
-// Event: ดึงสถิติผู้ป่วยรายเดือน
-ipcMain.handle('get-monthly-patients', async () => {
+  // Event: ดึงรายชื่อผู้ป่วยทั้งหมด
+ipcMain.handle('get-patients', async () => {
   try {
     const { data, error } = await supabase
       .from('patients')
-      .select('request_date');
-
+      .select('*') // เลือกทุกคอลัมน์เพื่อตรวจ schema ได้ง่าย
+        .order('hospital_number', { ascending: true });
+      
     if (error) throw error;
-
-    // นับจำนวนผู้ป่วยแยกตามเดือน
-    const monthlyCounts = {};
-    data.forEach(patient => {
-      if (patient.request_date) {
-        const date = new Date(patient.request_date);
-        const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
-        monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
-      }
-    });
-
-    // แปลงเป็น array และเรียงตามวันที่
-    const sortedData = Object.entries(monthlyCounts)
-      .map(([monthYear, count]) => {
-        const [month, year] = monthYear.split('/');
-        return { month: parseInt(month), year: parseInt(year), count };
-      })
-      .sort((a, b) => {
-        if (a.year !== b.year) return a.year - b.year;
-        return a.month - b.month;
-      });
-
-    return sortedData;
+    return data ?? [];
   } catch (err) {
-    console.error('Get monthly patients error:', err);
-    throw err;
+    console.error('get-patients failed:', err);
+    throw new Error(err.message || 'get-patients failed');
   }
 });
 
