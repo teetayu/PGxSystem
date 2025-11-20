@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ----- Update User Name in Header (Sync with Login) -----
+    try {
+        const raw = sessionStorage.getItem('currentUser');
+        if (raw) {
+            const u = JSON.parse(raw);
+            const fullName = [u.first_name || u.fname, u.last_name || u.lname].filter(Boolean).join(' ');
+            const nameBtn = document.querySelector('.newPatients');
+            if (nameBtn && fullName) nameBtn.textContent = fullName;
+        }
+    } catch (e) {
+        console.warn('Failed to load user info:', e);
+    }
+
     // ----- ข้อมูลตัวอย่าง (ตามภาพ) -----
     const mock = {
         name: 'นายเทส ทดสอบ',
@@ -106,13 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Submit Order Handler ----
     const submitBtn = document.getElementById('submit-order-btn');
     if (submitBtn) {
-        submitBtn.addEventListener('click', () => {
+        submitBtn.addEventListener('click', async () => {
             try {
                 const physician_order = document.getElementById('physician_order_input')?.value?.trim() || '';
                 const patient_medication = document.getElementById('patient_medication_input')?.value?.trim() || '';
                 const drug_name = document.getElementById('drug_name_input')?.value?.trim() || '';
 
-                // Collect selected tests from rendered table
                 const testRows = Array.from(document.querySelectorAll('#selected-tests-body tr'));
                 const tests = testRows.map(r => {
                     const cells = r.querySelectorAll('td');
@@ -120,9 +132,44 @@ document.addEventListener('DOMContentLoaded', () => {
                         inspection_code: (cells[0]?.textContent || '').trim(),
                         inspection_name: (cells[1]?.textContent || '').trim()
                     };
-                });
+                }).filter(t => t.inspection_code);
 
-                // Capture order_date (ISO + display)
+                if (tests.length === 0) {
+                    alert('กรุณาเลือกรายการตรวจอย่างน้อย 1 รายการ');
+                    return;
+                }
+
+                // mock user_id จาก sessionStorage (ควรใช้ user.user_id หลัง login จริง)
+                let users_id = null; // ใช้ชื่อ users_id ตาม get-patient-orders
+                try {
+                    const raw = sessionStorage.getItem('currentUser');
+                    if (raw) {
+                        const u = JSON.parse(raw);
+                        users_id = u.user_id; // mapping ให้ตรงกับ schema (users_id ใน orders)
+                    }
+                } catch {}
+                if (!users_id) {
+                    alert('ไม่พบข้อมูลผู้ใช้ (user_id) กรุณาเข้าสู่ระบบใหม่');
+                    return;
+                }
+
+                const createPayload = {
+                    users_id,
+                    physician_order,
+                    patient_medication,
+                    drug_name,
+                    tests
+                };
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'กำลังบันทึก...';
+                const res = await window.electronAPI.createOrder(createPayload);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'บันทึกการส่งตรวจ';
+                if (!res.success) {
+                    alert('บันทึกใบสั่งตรวจไม่สำเร็จ: ' + (res.message || 'ไม่ทราบสาเหตุ'));
+                    return;
+                }
+
                 const now = new Date();
                 const order_date = now.toISOString();
                 const order_date_display = now.toLocaleString('th-TH', {
@@ -140,17 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     patient_medication,
                     drug_name,
                     tests,
-                    order_date,            // raw ISO timestamp (for DB insert)
-                    order_date_display,    // formatted for preview
-                    created_at: order_date // keep backward compatibility
+                    order_ids: res.order_ids || [],
+                    order_date,
+                    order_date_display,
+                    created_at: order_date
                 };
-
                 localStorage.setItem('pgxOrderDraft', JSON.stringify(orderDraft));
-                // Navigate after save
-                window.location.href = '/view/userDoctorPre.html';
+
+                // เส้นทาง relative ไม่ใช้ /view/ เพื่อลด error Not allowed to load local resource
+                window.location.href = 'userDoctorPre.html';
             } catch (err) {
-                console.error('Failed to save order draft', err);
+                console.error('Failed to create order', err);
                 alert('เกิดข้อผิดพลาดในการบันทึกข้อมูลใบสั่งตรวจ');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'บันทึกการส่งตรวจ';
             }
         });
     }

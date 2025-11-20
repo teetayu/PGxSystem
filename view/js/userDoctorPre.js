@@ -61,17 +61,23 @@ function renderOrder(order) {
     }
     setText('order-date', displayDate || '');
     // Order ID placeholder (will be replaced after DB insert if integrated)
-    setText('order-id', order?.order_id || order?.id || '(รอสร้าง)');
+    // ถ้ามี order_ids (array) ให้แสดงตัวแรก หรือ join
+    let oid = order?.order_id || order?.id;
+    if (!oid && Array.isArray(order?.order_ids) && order.order_ids.length > 0) {
+        oid = order.order_ids[0]; // หรือ order.order_ids.join(', ')
+    }
+    setText('order-id', oid || '(รอสร้าง)');
 
     // Fill medicine note inputs if present
-    const treatmentInput = document.querySelector('.medicine-note input[name="order"]');
-    // There are two inputs with name="order" in template; queryAll and map
-    const noteInputs = document.querySelectorAll('.medicine-note input');
-    if (noteInputs.length >= 2) {
-        // First: drug_name, Second: patient_medication
-        if (noteInputs[0]) noteInputs[0].value = order?.drug_name || order?.treatmentDrug || '';
-        if (noteInputs[1]) noteInputs[1].value = order?.patient_medication || order?.currentMeds || '';
-    }
+    // Note: In HTML, inputs are:
+    // 1. name="drug_name" placeholder="รายละเอียด" (under "ชนิดของยาที่จะใช้ในการรักษา")
+    // 2. name="patient_medication" placeholder="รายละเอียด" (under "ยาที่ผู้ป่วยได้รับในปัจจุบัน")
+    
+    const drugNameInput = document.querySelector('input[name="drug_name"]');
+    if (drugNameInput) drugNameInput.value = order?.drug_name || order?.treatmentDrug || '';
+
+    const medInput = document.querySelector('input[name="patient_medication"]');
+    if (medInput) medInput.value = order?.patient_medication || order?.currentMeds || '';
 
     // Extra info (if later provided)
     setText('collected-at', order?.extra?.collectedAt);

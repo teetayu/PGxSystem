@@ -11,5 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getHospitals: () => ipcRenderer.invoke('get-hospitals'),
     getPatients: () => ipcRenderer.invoke('get-patients'),
     getPatientOrders: () => ipcRenderer.invoke('get-patient-orders'),
-    getCyp2c9Result: (payload) => ipcRenderer.invoke('get-cyp2c9-result', payload)
+    getOrderDetail: (orderId) => ipcRenderer.invoke('get-order-detail', orderId),
+    getCyp2c9Result: (payload) => ipcRenderer.invoke('get-cyp2c9-result', payload),
+    createOrder: (orderData) => ipcRenderer.invoke('create-order', orderData)
 });
