@@ -1,5 +1,5 @@
 # PGxSystem – Precision Medicine Support Platform  
-CPE320 – Software Engineering  
+
 Plus Ultra Team  
 
 ---
